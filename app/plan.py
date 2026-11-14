@@ -13,18 +13,21 @@ def _city(address):
     return ", ".join(parts[-2:-1] + ["CA"]) if len(parts) >= 3 else address
 
 
-def plan(origin, destination, end_local: datetime, max_extra=10, categories=None):
+def plan(origin, destination, end_local: datetime, max_extra=10, categories=None, mode="transit"):
     trace = Trace()
     # Stride searches wider than Google's default answer: later departures within the limit, plus bus-only routes
     # Google's default answer, then every public-transport mode on its own (each surfaces routes the default hides),
     # then later departures within the limit
     searches = [(end_local, None, "Google")]
-    searches += [(end_local, {"allowedTravelModes": [m]}, label) for m, label in
+    if mode == "walk":
+        searches += [(end_local + timedelta(minutes=m), None, f"leave +{m} min") for m in (15, 30)]
+    else:
+      searches += [(end_local, {"allowedTravelModes": [m]}, label) for m, label in
                  (("BUS", "bus routes"), ("TRAIN", "train routes"), ("LIGHT_RAIL", "light rail routes"), ("RAIL", "rail routes"))]
-    searches += [(end_local + timedelta(minutes=m), None, f"leave +{m} min") for m in (10, 20, 30) if m <= max_extra]
+      searches += [(end_local + timedelta(minutes=m), None, f"leave +{m} min") for m in (10, 20, 30) if m <= max_extra]
     itins, seen, from_google = [], set(), 0
     for depart, prefs, source in searches:
-        for r in fetch_routes(origin, destination, depart, prefs):
+        for r in fetch_routes(origin, destination, depart, prefs, "WALK" if mode == "walk" else "TRANSIT"):
             it = build_itinerary(r, end_local)
             sig = (it["leave"], it["arrive"], tuple(s.get("line") for s in it["segments"]))
             if sig not in seen:
@@ -38,14 +41,21 @@ def plan(origin, destination, end_local: datetime, max_extra=10, categories=None
     soonest = min(it["arrive"] for it in itins)
     rest = sorted([it for it in itins[1:] if it["arrive"] <= soonest + timedelta(minutes=60)], key=lambda it: it["arrive"])
     itins = [google_first] + rest[:11]
-    trace.log(f"Routes: {len(itins)} public-transport options compared ({from_google} from Google's default answer, "
+    trace.log(f"Routes: {len(itins)} walking options compared (Google's walking routes, leaving now and later)" if mode == "walk" else
+              f"Routes: {len(itins)} public-transport options compared ({from_google} from Google's default answer, "
               f"plus bus, train and light-rail searches and later departures)")
 
     anchors = []
     for it in itins:
-        for a in anchors_for(it, origin, destination, _city(origin), _city(destination)):
+        if mode == "walk":
+            st = it.get("streets") or []
+            found = [origin] + [f"{a} & {b}, {_city(origin)}" for a, b in zip(st, st[1:])] + [destination]
+        else:
+            found = anchors_for(it, origin, destination, _city(origin), _city(destination))
+        for a in found:
             if a not in anchors:
                 anchors.append(a)
+    anchors = anchors[:10]
     places, nq = find_places(trace, anchors, categories or CATEGORIES)
     trace.log(f"Places: {len(places)} businesses with hours found around {len(anchors)} stops ({nq} map searches through Telem)")
     pmap = {p["key"]: p for p in places}
@@ -88,13 +98,18 @@ def plan(origin, destination, end_local: datetime, max_extra=10, categories=None
         min(later, key=lambda it: sum(p["secs"] for p in it["points"])) if later else None)
 
     # Stride's two options: fewest minutes without an open door across ALL options (trip time may be longer)
-    ranked = sorted(itins, key=lambda it: (it["stride_uncovered"], it["arrive"]))
-    stride1 = ranked[0]
-    stride2 = next((it for it in ranked[1:] if it is not stride1), None)
-    best = stride1
+    # fair comparison: Stride only picks routes that leave at (about) the same time as Google's
+    same_start = [it for it in itins if abs((it["leave"] - google["leave"]).total_seconds()) <= SAME_START_MIN * 60]
+    # only routes with strictly fewer (whole) minutes with nothing open nearby than Google's; never Google itself
+    better = [it for it in same_start if it is not google and round(it["stride_uncovered"]) < round(google["uncovered"])]
+    ranked = sorted(better, key=lambda it: (it["stride_uncovered"], it["arrive"]))
+    stride1 = ranked[0] if ranked else None
+    stride2 = ranked[1] if len(ranked) > 1 else None
+    best = stride1 or google
     options = [{**_option("Google's first pick", google, places, status, earliest), "role": "google"}]
-    options.append({**_option("Stride option 1", stride1, places, status, earliest, stride=True), "role": "stride",
-                    "same_as_google": stride1 is google})
+    if stride1 is not None:
+        options.append({**_option("Stride option 1", stride1, places, status, earliest, stride=True), "role": "stride",
+                        "same_as_google": False})
     if stride2 is not None:
         options.append({**_option("Stride option 2", stride2, places, status, earliest, stride=True), "role": "stride2",
                         "same_as_google": stride2 is google})
@@ -106,9 +121,9 @@ def plan(origin, destination, end_local: datetime, max_extra=10, categories=None
                             "within_limit": it["arrive"] <= earliest + timedelta(minutes=max_extra)})
 
     notes = []
-    if best is google and not best["wait_inside"]:
-        notes.append(f"Google's fastest route is also the one with the fewest minutes without an open door "
-                     f"(Stride compared all {len(itins)} options).")
+    if stride1 is None:
+        notes.append(f"Google's fastest route already has the least time with nothing open nearby, "
+                     f"among the {len(same_start)} options leaving around {google['leave']:%-I:%M %p}.")
     if google["leave"] - end_local > timedelta(minutes=60):
         notes.append(f"No transit leaves before {google['leave']:%-I:%M %p}. "
                      f"That is {int((google['leave'] - end_local).total_seconds() // 60)} minutes after you are ready.")
@@ -128,6 +143,7 @@ def plan(origin, destination, end_local: datetime, max_extra=10, categories=None
     }
 
 
+SAME_START_MIN = 10
 WALK_M_PER_MIN = 80
 BUFFER_MIN = 2
 
@@ -256,4 +272,10 @@ def _option(label, it, places, status, earliest, stride=False):
                        for k, (d, t) in used.items()],
         "skipped_places": skipped,
         "map": _map(it, places, status),
+        "conditions": conditions(*_start(it), it["leave"]),
     }
+
+
+def _start(it):
+    w = next((s for s in it["segments"] if s["kind"] == "walk" and s.get("points")), None)
+    return w["points"][0] if w else (37.3874, -122.0398)

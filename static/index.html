@@ -208,6 +208,18 @@ ol.steps li.wait{background:#FDEBDD!important}.optrow.cur{background:var(--lb2)!
 .badge.confirmed{background:var(--lb2)!important;color:var(--navy)!important}.badge.uncertain{background:#FDEBDD!important;color:var(--ort)!important}
 .tg.g{background:var(--or)!important}.tg.s,.tg.s2{background:var(--navy)!important}
 .sub,.dsub,.small{color:#4A6283!important}
+
+form{grid-template-columns:2fr 2fr 1.4fr auto!important}@media (max-width:860px){form{grid-template-columns:1fr 1fr!important}}
+.modes{display:flex;background:var(--lb);border-radius:10px;padding:3px;gap:3px;align-self:end}
+.mode{background:transparent!important;color:var(--navy)!important;font-size:15px;padding:8px 12px;border-radius:8px;box-shadow:none!important}
+.mode.on{background:var(--navy)!important;color:#fff!important}
+
+
+.modesrow{display:flex;justify-content:flex-start;margin-top:16px}
+.modesrow .modes{background:#fff;box-shadow:0 2px 8px rgba(27,54,93,.08);padding:4px;border-radius:12px}
+.modesrow .mode{font-size:16px;padding:10px 18px}
+
+.tile.none{cursor:default}.nonemsg{font-size:24px;font-weight:800;color:var(--navy);margin-top:18px}
 </style>
 </head>
 <body>
@@ -215,8 +227,8 @@ ol.steps li.wait{background:#FDEBDD!important}.optrow.cur{background:var(--lb2)!
 <main>
   <form id="f" autocomplete="off">
     <label>From<input id="origin" value="880 W Maude Ave, Sunnyvale, CA 94085" required></label>
-    <label>To<input id="destination" value="Palo Alto Caltrain Station, Palo Alto, CA" required></label>
-    <label>Ready to leave<input id="end" type="datetime-local" value="2026-11-15T06:00" required></label>
+    <label>To<input id="destination" value="Santa Clara University, Santa Clara, CA" required></label>
+    <label>Ready to leave<input id="end" type="datetime-local" value="2026-11-14T19:00" required></label>
     <button id="go">Find a route</button>
   </form>
   <div id="progress"></div>
@@ -228,23 +240,30 @@ const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const steps = ["Getting every bus, train and light-rail option…","Finding open businesses around every stop (Telem)…",
   "Checking opening hours…","Counting minutes with nothing open nearby…","Almost there…"];
-let map, layer, data, focus = "stride", tab = "trip";
+let map, layer, data, focus = "stride", tab = "trip", mode = "transit", cache = {};
+const modesRow = () => `<div class="modesrow"><div class="modes"><button type="button" class="mode ${mode==="transit"?"on":""}" data-m="transit">🚌 Transit</button><button type="button" class="mode ${mode==="walk"?"on":""}" data-m="walk">🚶 Walk</button></div></div>`;
+const bindModes = () => document.querySelectorAll(".mode").forEach(b => b.onclick = () => { if (b.dataset.m !== mode){ mode = b.dataset.m; run(); } });
 const R = n => Math.round(n);
 
-$("#f").addEventListener("submit", async e => {
-  e.preventDefault();
-  $("#go").disabled = true; $("#out").innerHTML = ""; if (map){ map.remove(); map = null; }
+$("#f").addEventListener("submit", e => { e.preventDefault(); cache = {}; mode = "transit"; run(); });
+
+async function run(){
+  if (map){ map.remove(); map = null; }
+  if (cache[mode]){ data = cache[mode]; focus = data.options.some(o => o.role === "stride") ? "stride" : "google"; tab = "trip"; $("#progress").textContent = ""; render(); return; }
+  const m = mode;
+  $("#go").disabled = true; $("#out").innerHTML = data ? modesRow() : ""; bindModes();
   let i = 0; $("#progress").textContent = steps[0];
   const timer = setInterval(() => { if (i < steps.length - 1) $("#progress").textContent = steps[++i]; }, 8000);
   try {
     const r = await fetch("/api/plan", {method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({origin:$("#origin").value, destination:$("#destination").value, end_time:$("#end").value, max_extra_minutes:60})});
+      body: JSON.stringify({origin:$("#origin").value, destination:$("#destination").value, end_time:$("#end").value, max_extra_minutes:60, mode:m})});
     const d = await r.json();
     if (!r.ok || d.error) throw new Error(d.detail || d.error);
-    data = d; focus = "stride"; tab = "trip"; $("#progress").textContent = ""; render();
+    cache[m] = d;
+    if (mode === m){ data = d; focus = d.options.some(o => o.role === "stride") ? "stride" : "google"; tab = "trip"; $("#progress").textContent = ""; render(); }
   } catch (err) { $("#progress").innerHTML = `<span class="err">${esc(err.message)}</span>`; }
   finally { clearInterval(timer); $("#go").disabled = false; }
-});
+}
 
 const G = () => data.options.find(o => o.role === "google");
 const S1 = () => data.options.find(o => o.role === "stride");
@@ -272,14 +291,14 @@ function tile(o, who){
 }
 
 function render(){
-  const c = data.conditions, o = cur();
+  const o = cur(), c = o.conditions || data.conditions;
   const chips = [c.daylight===false?"🌙 After dark":c.daylight?"☀️ Daylight":null, c.temp_c!=null?`🌡️ ${R(c.temp_c)}°C`:null,
     c.rain_pct!=null?`🌧️ ${c.rain_pct}% rain`:null, c.aqi!=null?`🍃 AQI ${c.aqi} · ${c.aqi<=50?"good":c.aqi<=100?"moderate":"poor"}`:null].filter(Boolean);
   const tabs = [["trip","Your trip"],["why","Why Stride chose this"],["all","Other options"],["ev","Evidence"]];
-  $("#out").innerHTML = `
+  $("#out").innerHTML = modesRow() + `
     <div class="infobar"><div class="def"><span class="i">i</span><div><b>Nothing open nearby</b><div class="dsub">Minutes you walk or wait with no open shop, café or gas station within a 1-minute walk.</div></div></div>
       <div class="conds">${chips.map(x=>`<span class="cond">${esc(x)}</span>`).join("")}</div></div>
-    <div class="tiles">${tile(G(), "google")}${tile(focus==="stride2"?S2():S1(), "stride")}</div>
+    <div class="tiles">${tile(G(), "google")}${S1() ? tile(focus==="stride2"?S2():S1(), "stride") : `<div class="tile s none"><div class="tw"><span class="who">Stride · most open</span></div><div class="nonemsg">No better route for this departure.</div><div class="sub">${esc(data.notes[0] || "")}</div></div>`}</div>
         <div class="mapcard"><div id="map"></div>
       <div class="legend"><span><span class="sw" style="border-color:var(--google)"></span>Google</span><span><span class="sw" style="border-color:var(--stride)"></span>Stride</span>
       <span><span class="sw" style="border-color:var(--muted);border-top-style:dashed"></span>Nothing open nearby</span><span><span class="dot" style="background:var(--stride)"></span>Open place</span></div>
@@ -287,6 +306,7 @@ function render(){
     <div class="tabbody">${tab==="trip"?tripTab(o):tab==="why"?whyTab():tab==="all"?table():evTab(o)}</div></div>`;
   document.querySelectorAll("[data-f]").forEach(el => el.onclick = ev => { ev.stopPropagation(); if (el.dataset.f !== focus){ focus = el.dataset.f; if (map){ map.remove(); map = null; } render(); }
     document.querySelector(".mapcard").scrollIntoView({behavior:"smooth", block:"start"}); });
+  bindModes();
   document.querySelectorAll("[data-t]").forEach(el => el.onclick = () => { tab = el.dataset.t; const y = scrollY; if (map){ map.remove(); map = null; } render(); scrollTo(0, y); });
   draw();
 }
@@ -327,8 +347,8 @@ function whyOne(o, n){
 }
 
 function whyTab(){
-  return `<p class="lead">Stride looked at <b>every bus, train and light-rail option</b> (${data.options.length}), checked which places are open along each one, and picked the routes where you spend the least time with nothing open nearby.</p>
-    ${whyOne(S1(), 1)}${S2() ? whyOne(S2(), 2) : ""}
+  return `<p class="lead">Stride looked at <b>${mode === "walk" ? "every walking route, leaving now and later" : "every bus, train and light-rail option"}</b> (${data.options.length}), checked which places are open along each one, and picked the routes where you spend the least time with nothing open nearby.</p>
+    ${S1() ? whyOne(S1(), 1) : `<p>${esc(data.notes[0] || "Google's route is already the best.")}</p>`}${S2() ? whyOne(S2(), 2) : ""}
     <p class="small">This counts open businesses. It is not a safety rating; you decide what matters to you.</p>`;
 }
 

@@ -1,5 +1,5 @@
 """Google Routes transit itineraries -> timed segments and sample points."""
-import os
+import os, re
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 from .core import cached_post, decode_polyline, haversine
@@ -7,7 +7,8 @@ from .core import cached_post, decode_polyline, haversine
 TZ = ZoneInfo("America/Los_Angeles")
 MASK = ",".join(["routes.duration", "routes.legs.steps.travelMode", "routes.legs.steps.staticDuration",
                  "routes.legs.steps.distanceMeters", "routes.legs.steps.polyline.encodedPolyline",
-                 "routes.legs.steps.startLocation", "routes.legs.steps.endLocation", "routes.legs.steps.transitDetails"])
+                 "routes.legs.steps.startLocation", "routes.legs.steps.endLocation", "routes.legs.steps.transitDetails",
+                 "routes.legs.steps.navigationInstruction.instructions"])
 
 
 def _t(s):
@@ -23,8 +24,8 @@ def _ll(loc):
     return ll.get("latitude"), ll.get("longitude")
 
 
-def fetch_routes(origin, destination, depart_local, transit_preferences=None):
-    body = {"origin": {"address": origin}, "destination": {"address": destination}, "travelMode": "TRANSIT",
+def fetch_routes(origin, destination, depart_local, transit_preferences=None, travel_mode="TRANSIT"):
+    body = {"origin": {"address": origin}, "destination": {"address": destination}, "travelMode": travel_mode,
             "departureTime": depart_local.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "computeAlternativeRoutes": True}
     if transit_preferences:
@@ -86,7 +87,13 @@ def build_itinerary(route, not_before):
                          "vehicle": (line.get("vehicle") or {}).get("type"),
                          "from": stop.get("name"), "to": sd["arrivalStop"].get("name")})
             clock = arr
-    return {"leave": leave, "arrive": clock, "segments": segs}
+    streets = []
+    for st in steps:
+        txt = ((st.get("navigationInstruction") or {}).get("instructions") or "").split("\n")[0]
+        m = re.search(r"\b(?:onto|on|toward)\s+(.+?)(?:\s+Pass by|\s+Destination|$)", txt)
+        if m and m.group(1) not in streets:
+            streets.append(m.group(1).strip())
+    return {"leave": leave, "arrive": clock, "segments": segs, "streets": streets}
 
 
 def sample_points(itin, step_m=80):
