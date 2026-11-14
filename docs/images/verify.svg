@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif">
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B365D"/></marker></defs>
+  <rect width="1000" height="400" rx="18" fill="#EAF3FB"/>
+  <text x="40" y="52" font-size="26" font-weight="800" fill="#1B365D">Hours check: the LLM extracts, the code decides</text>
+  <text x="40" y="80" font-size="15" fill="#4A6283">verify.py · run for the 5 places the numbers depend on most, at the minute you are near each one</text>
+
+  <g font-size="14" fill="#1B365D">
+    <rect x="40" y="110" width="220" height="52" rx="10" fill="#fff"/><text x="150" y="133" text-anchor="middle" font-weight="700">Google Maps listing</text><text x="150" y="152" text-anchor="middle" font-size="12" fill="#4A6283">hours from outscraper_gmaps</text>
+    <rect x="40" y="174" width="220" height="52" rx="10" fill="#fff"/><text x="150" y="197" text-anchor="middle" font-weight="700">Recent reviews</text><text x="150" y="216" text-anchor="middle" font-size="12" fill="#4A6283">≤ 2 years old, mention hours</text>
+    <rect x="40" y="238" width="220" height="52" rx="10" fill="#fff"/><text x="150" y="261" text-anchor="middle" font-weight="700">Web search</text><text x="150" y="280" text-anchor="middle" font-size="12" fill="#4A6283">“&lt;place&gt; hours”, auto-routed</text>
+
+    <rect x="320" y="174" width="210" height="52" rx="10" fill="#F57C1F"/><text x="425" y="197" text-anchor="middle" fill="#fff" font-weight="700">Claude Haiku</text><text x="425" y="216" text-anchor="middle" fill="#fff" font-size="12">quotes stated hours only</text>
+
+    <rect x="590" y="174" width="150" height="52" rx="10" fill="#1B365D"/><text x="665" y="197" text-anchor="middle" fill="#fff" font-weight="700">decide()</text><text x="665" y="216" text-anchor="middle" fill="#fff" font-size="12">in Python</text>
+  </g>
+  <g stroke="#1B365D" stroke-width="2" fill="none" marker-end="url(#a)">
+    <path d="M262 200 H316"/><path d="M262 264 C290 264 290 210 316 206"/><path d="M262 136 C560 136 610 150 650 170"/>
+    <path d="M532 200 H586"/>
+    <path d="M742 190 C780 190 780 136 806 136"/><path d="M742 200 H806"/><path d="M742 210 C780 210 780 264 806 264"/>
+  </g>
+  <g font-size="14">
+    <rect x="810" y="112" width="160" height="48" rx="10" fill="#D3E6F6"/><text x="890" y="133" text-anchor="middle" fill="#1B365D" font-weight="800">hours checked</text><text x="890" y="151" text-anchor="middle" fill="#1B365D" font-size="11">a web source agrees</text>
+    <rect x="810" y="176" width="160" height="48" rx="10" fill="#fff"/><text x="890" y="197" text-anchor="middle" fill="#4A6283" font-weight="800">listing only</text><text x="890" y="215" text-anchor="middle" fill="#4A6283" font-size="11">no other source found</text>
+    <rect x="810" y="240" width="160" height="48" rx="10" fill="#FDEBDD"/><text x="890" y="261" text-anchor="middle" fill="#B45309" font-weight="800">hours doubtful</text><text x="890" y="279" text-anchor="middle" fill="#B45309" font-size="11">not counted as open</text>
+  </g>
+  <g font-size="13" fill="#4A6283">
+    <text x="40" y="330">“Doubtful” wins over “checked”: a web source that says closed at that minute, or a review reporting it closed within ±60 min.</text>
+    <text x="40" y="352">Without ANTHROPIC_API_KEY, every place is “listing only”.</text>
+    <text x="40" y="374">Example from the README demo: a Starbucks listed till 9 PM, but two sources say 7:30 PM → not counted.</text>
+  </g>
+</svg>

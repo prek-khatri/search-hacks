@@ -1,68 +1,83 @@
-# Stride
+<div align="center">
+
+# STRIDE
 
 **Know your route. Take it in stride.**
 
-Stride compares Google's fastest public-transport route with the routes that keep you near open businesses. For every option it counts the minutes you would spend walking or waiting with **nothing open nearby**: no open shop, café, restaurant, gas station or pharmacy within 100 m (about a 1-minute walk). Opening hours are checked across several sources, and places with doubtful hours are not counted.
+Google gives you the fastest bus or train. Stride also shows the route that keeps you **near open businesses** while you walk and wait.
 
-Built at SearchHack (Telem AI), Sunnyvale, 14 Nov 2026.
+Built at SearchHack (Telem AI), Sunnyvale, 14 Nov 2026
+
+![Stride start screen](docs/images/home.png)
+
+</div>
+
+---
+
+## The idea
+
+For every public-transport option, Stride counts the **minutes with nothing open nearby**. Those are minutes you spend walking or waiting with no open shop, café, restaurant, gas station, pharmacy or grocery store within **100 m** (about a 1-minute walk).
+
+Then it shows Google's fastest route next to Stride's two best routes, the ones with the fewest such minutes, even if they take a little longer.
+
+Stride only reports facts (what's open, what's closed, whose hours were checked). **It is not a safety rating.**
 
 ## How it works
 
-1. **Routes.** Google Routes API is queried for every public-transport option: the default answer, plus bus-only, train, light-rail and rail searches, plus later departures. That gives 12–16 options per trip instead of Google's 6.
-2. **Places.** Telem searches Google Maps listings (`outscraper_gmaps`) around every stop, batched (Telem allows 160 results per call).
-3. **Minute by minute.** Each walking and waiting minute is checked: is any business open within 100 m at that exact time?
-4. **Hours check.** For the places a route depends on, Telem fetches Google Reviews (`outscraper_greviews`) and runs an auto-routed web search. Claude Haiku only extracts the hours each source states; whether a place is open at that minute is decided in code.
-5. **Ranking.** Google's fastest route on the left; Stride's two options with the fewest minutes with nothing open nearby on the right, even if the trip takes longer.
-6. **Conditions.** Daylight, temperature, rain chance and AQI from Open-Meteo.
+![Pipeline](docs/images/pipeline.svg)
 
-Stride reports facts (open, closed, hours checked or doubtful). It is not a safety rating and uses no crime or crowd data.
+1. **Get every route.** Ask Google for transit routes: the default answer, then bus-only, train-only and light-rail-only searches, then later departures. That gives far more options than Google shows by default.
+2. **Find open places.** Search for businesses and their opening hours around the start, every stop and the destination (**Telem**).
+3. **Check minute by minute.** Follow each route through time. For every minute of walking or waiting, ask: is anything open within 100 m *right now*?
+4. **Double-check the hours.** For the few places the result depends on most, compare the listed hours with recent reviews and the web (**Telem**). If any source says the place is closed then, it doesn't count.
+5. **Rank.** Pick the routes with the fewest minutes with nothing open nearby. If a wait has nothing open, suggest waiting inside a nearby open place when there's time to walk back.
+6. **Add conditions.** Daylight, temperature, rain chance and air quality at departure (Open-Meteo).
+
+### The metric
+
+![How minutes with nothing open nearby are counted](docs/images/metric.svg)
+
+### The hours check
+
+![Hours check](docs/images/verify.svg)
+
+The AI (Claude Haiku) only **reads** the hours each source states. Whether a place is open at your minute is decided by plain code, never by the AI.
+
+## Where we use Telem
+
+Telem is the search layer behind Stride. All place, review and web lookups go through it:
+
+| What Stride needs | Telem search used | Where in the flow |
+|---|---|---|
+| Businesses near each stop, with opening hours | Google Maps listings (`outscraper_gmaps`) | Step 2: find open places |
+| Recent reviews that mention closing times | Google Reviews (`outscraper_greviews`) | Step 4: hours check |
+| Each place's hours stated on the web | Web search with Telem's auto-routing (it picks the best provider) | Step 4: hours check |
+
+Everything else comes from elsewhere: routes from the **Google Routes API**, reading hours from text by **Claude Haiku**, weather and air quality from **Open-Meteo**.
+
+## Example
+
+From Sunnyvale to Santa Clara University at 7 PM on a Saturday:
+
+- **Google:** 25 min trip, **12 min** with nothing open nearby.
+- **Stride:** Bus 21, 41 min trip, only **3 min** with nothing open nearby.
+- A Starbucks on the way is listed as open till 9 PM, but two sources say it closes at 7:30 PM, so Stride doesn't count it.
+
+When Google's fastest route is also the best one, Stride says so.
 
 ## Run it
 
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-cp .env.example .env   # then fill in your keys
+cp .env.example .env   # add TELEM_API_KEY, GOOGLE_MAPS_API_KEY, ANTHROPIC_API_KEY
 .venv/bin/uvicorn app.main:app --port 8000
 ```
 
-Open http://localhost:8000.
+Open <http://localhost:8000>. A new trip takes 30–90 s; repeated trips load instantly from the cache.
 
-## Keys (in `.env`, never in git)
+## Limitations
 
-| Variable | What for |
-|---|---|
-| `TELEM_API_KEY` | Telem search (places, reviews, web) |
-| `TELEM_BASE_URL` | Optional. Defaults to the hackathon router `https://hack.telem.ai/api/router` |
-| `GOOGLE_MAPS_API_KEY` | Google Routes API (transit) |
-| `ANTHROPIC_API_KEY` | Claude Haiku, extracts stated opening hours |
-
-## Code
-
-| File | Does |
-|---|---|
-| `app/routes.py` | Google Routes → timed walk / wait / ride segments, sample points |
-| `app/places.py` | Telem place search, opening-hours parser |
-| `app/metric.py` | Minutes with nothing open nearby |
-| `app/verify.py` | Hours check across listing, web and reviews |
-| `app/plan.py` | Gathers options, ranks them, builds the response |
-| `app/conditions.py` | Open-Meteo weather, daylight, AQI |
-| `app/main.py` | FastAPI: `POST /api/plan`, serves the page |
-| `static/index.html` | The app (Leaflet map, Esri Light Gray basemap) |
-
-Every external response is cached on disk in `cache/` (not committed).
-
-## Demo trips
-
-From `880 W Maude Ave, Sunnyvale, CA 94085`:
-
-| Ready to leave | To | What it shows |
-|---|---|---|
-| Sat 14 Nov, 7:00 PM | Santa Clara University, Santa Clara, CA | Google: 25 min trip, 12 min with nothing open. Stride: Bus 21, 41 min trip, 3 min. Starbucks not counted (listed till 9 PM, 2 sources say 7:30 PM) |
-| Sun 15 Nov, 6:00 AM | Palo Alto Caltrain Station, Palo Alto, CA | Google: 42 min, 25 min with nothing open. Stride: Rapid 523 → 522, 56 min, 9 min |
-| Sat 14 Nov, 7:00 PM | San Jose Diridon Station, San Jose, CA | Google's fastest is also the best; Stride says so |
-
-## Notes
-
-- Hackathon demo using Telem's providers. Platform terms would need review before a real launch.
-- First run of a new trip takes 30–90 s; cached trips load instantly. Avoid running several new trips at once (Telem rate limit).
+- Bay Area only for now.
+- The first run of a trip is slow because of the many searches.
+- Hackathon demo; the terms of each data provider would need review before a real launch.
