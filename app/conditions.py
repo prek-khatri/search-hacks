@@ -21,3 +21,32 @@ def conditions(lat, lng, when):
     except Exception:
         out["aqi"] = None
     return out
+
+
+def air_outside(points):
+    """AQI while you are outside on this route: every walking/waiting minute, at the grid cell and hour
+    you are actually there (Open-Meteo air quality, ~0.1 degree grid). Time on a bus or train is not counted."""
+    total = weighted = 0.0
+    worst = None
+    hourly = {}
+    for p in points:
+        cell = (round(p["lat"], 1), round(p["lng"], 1))
+        day = p["t"].strftime("%Y-%m-%d")
+        key = (cell, day)
+        if key not in hourly:
+            try:
+                h = cached_get("meteo-aq", f"https://air-quality-api.open-meteo.com/v1/air-quality?latitude={cell[0]}&longitude={cell[1]}"
+                                           f"&hourly=us_aqi&timezone=America/Los_Angeles&start_date={day}&end_date={day}")["hourly"]
+                hourly[key] = dict(zip(h["time"], h["us_aqi"]))
+            except Exception:
+                hourly[key] = {}
+        aqi = hourly[key].get(p["t"].strftime("%Y-%m-%dT%H:00"))
+        if aqi is None:
+            continue
+        total += p["secs"]
+        weighted += aqi * p["secs"]
+        worst = aqi if worst is None else max(worst, aqi)
+    if not total:
+        return None
+    return {"aqi_avg": round(weighted / total), "aqi_max": worst, "minutes_outside": round(total / 60, 1),
+            "cells": len({k[0] for k in hourly})}

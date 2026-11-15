@@ -41,6 +41,11 @@ def api_plan(req: PlanRequest):
         raise HTTPException(502, str(e))
 
 
+@app.get("/app")
+def phone_app():
+    return FileResponse(ROOT / "static" / "app.html", headers={"Cache-Control": "no-store"})
+
+
 @app.get("/")
 def index():
     return FileResponse(ROOT / "static" / "index.html", headers={"Cache-Control": "no-store"})

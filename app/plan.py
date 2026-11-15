@@ -5,7 +5,7 @@ from .routes import TZ, fetch_routes, build_itinerary, sample_points, public
 from .places import find_places, open_at, hours_text, CATEGORIES
 from .metric import anchors_for, evaluate, RADIUS
 from .verify import verify
-from .conditions import conditions
+from .conditions import conditions, air_outside
 
 
 def _city(address):
@@ -273,6 +273,7 @@ def _option(label, it, places, status, earliest, stride=False):
         "skipped_places": skipped,
         "map": _map(it, places, status),
         "conditions": conditions(*_start(it), it["leave"]),
+        "air": air_outside(it["points"]),
     }
 
 

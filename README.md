@@ -64,7 +64,16 @@ Everything else comes from elsewhere: routes from the **Google Routes API**, rea
 
 ## Examples
 
-Both start at 880 W Maude Ave, Sunnyvale, on Saturday 14 Nov 2026, and both routes leave at the same time.
+All start at 880 W Maude Ave, Sunnyvale. In every example Google's route and Stride's route **leave at the same time**, and Stride's has fewer minutes with nothing open nearby.
+
+| Time | Trip | Google (fastest) | Stride |
+|---|---|---|---|
+| **Sun 8:00 AM** | Walk to The Meltdown, 814 W Ahwanee Ave | 20 min walk, **12 min** nothing open | 21 min walk, **9 min**, past Alliance, Valero and Chevron |
+| **Sun 2:00 PM** | Walk to Mexiqueña, 776 N Mathilda Ave | 18 min walk, **14 min** nothing open | 19 min walk, **9 min**, past Alliance, Valero and Chevron |
+| **Sat 7:00 PM** | Transit to Santa Clara University | 25 min trip, **12 min** nothing open | Bus 21, 41 min trip, **3 min** |
+| **Sat 8:00 PM** | Walk to Mexiqueña | 18 min walk, **14 min** nothing open | 19 min walk, **9 min** |
+
+More detail on two of them:
 
 **Transit to Santa Clara University, ready at 7 PM** (both leave 7:16 PM)
 
@@ -79,6 +88,12 @@ Both start at 880 W Maude Ave, Sunnyvale, on Saturday 14 Nov 2026, and both rout
 
 When Google's fastest route is also the best one, Stride says so.
 
+## Screenshots
+
+| Phone app landing | Google vs Stride, same departure | Stride card |
+|---|---|---|
+| ![Phone app landing screen](docs/images/screens/app-landing.png) | ![Google and Stride cards leaving at 7:16 PM](docs/images/screens/web-google-vs-stride.png) | ![Stride card with option switch](docs/images/screens/web-stride-card.png) |
+
 ## Run it
 
 ```bash
@@ -90,7 +105,9 @@ cp .env.example .env   # add TELEM_API_KEY, GOOGLE_MAPS_API_KEY, ANTHROPIC_API_K
 
 Open <http://localhost:8000>. A new trip takes 30–90 s; repeated trips load instantly from the cache.
 
-The two example trips above are saved in `demo/` and load instantly, even without API keys or a cache. Search them exactly as written (Transit for Santa Clara University at 7:00 PM; Walk for Mexiqueña at 8:00 PM).
+All the example trips above are saved in `demo/` and load instantly, even without API keys or a cache.
+
+**Phone app view:** open <http://localhost:8000/app> for a phone-sized version with a landing screen, animations ([Motion](https://motion.dev), the vanilla-JS version of Framer Motion) and one-tap test trips. Logo options are in `static/logos.html`.
 
 ## Limitations
 

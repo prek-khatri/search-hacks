@@ -220,6 +220,8 @@ form{grid-template-columns:2fr 2fr 1.4fr auto!important}@media (max-width:860px)
 .modesrow .mode{font-size:16px;padding:10px 18px}
 
 .tile.none{cursor:default}.nonemsg{font-size:24px;font-weight:800;color:var(--navy);margin-top:18px}
+
+.airline{margin-top:10px;font-size:15px;color:var(--navy)}.airline b{font-size:17px}
 </style>
 </head>
 <body>
@@ -287,13 +289,14 @@ function tile(o, who){
     <div class="big">${o.total_minutes}<span> min</span></div>
     <div class="times">${esc(o.leave_at)} → ${esc(o.arrive_at)}</div>
     <div class="chain">${chain(o)}</div>
-    <div class="nothing ${g?"o":"gr"}"><b>${R(o.minutes_without_open_door)} min</b> with nothing open nearby</div>${same}</div>`;
+    <div class="nothing ${g?"o":"gr"}"><b>${R(o.minutes_without_open_door)} min</b> with nothing open nearby</div>
+    ${o.air ? `<div class="airline">Outside <b>${R(o.air.minutes_outside)} min</b> in air <b>AQI ${o.air.aqi_avg}</b> (${o.air.aqi_avg<=50?"good":o.air.aqi_avg<=100?"moderate":"poor"}${o.air.aqi_max !== o.air.aqi_avg ? `, worst ${o.air.aqi_max}` : ""})</div>` : ""}${same}</div>`;
 }
 
 function render(){
   const o = cur(), c = o.conditions || data.conditions;
   const chips = [c.daylight===false?"🌙 After dark":c.daylight?"☀️ Daylight":null, c.temp_c!=null?`🌡️ ${R(c.temp_c)}°C`:null,
-    c.rain_pct!=null?`🌧️ ${c.rain_pct}% rain`:null, c.aqi!=null?`🍃 AQI ${c.aqi} · ${c.aqi<=50?"good":c.aqi<=100?"moderate":"poor"}`:null].filter(Boolean);
+    c.rain_pct!=null?`🌧️ ${c.rain_pct}% rain`:null, null].filter(Boolean);
   const tabs = [["trip","Your trip"],["why","Why Stride chose this"],["all","Other options"],["ev","Evidence"]];
   $("#out").innerHTML = modesRow() + `
     <div class="infobar"><div class="def"><span class="i">i</span><div><b>Nothing open nearby</b><div class="dsub">Minutes you walk or wait with no open shop, café or gas station within a 1-minute walk.</div></div></div>

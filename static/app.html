@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stride</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/motion@11.11.17/dist/motion.js"></script>
+<style>
+:root{--lb:#EAF3FB;--lb2:#D3E6F6;--navy:#1B365D;--or:#F57C1F;--ort:#B45309;--google:#ff6a13;--stride:#0fb463;--muted:#4A6283;--card:#fff}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#dfe9f3;display:flex;align-items:center;justify-content:center;font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;color:var(--navy)}
+.phone{width:390px;height:844px;background:var(--lb);border-radius:46px;box-shadow:0 0 0 12px #0f1c30,0 30px 80px rgba(15,28,48,.35);overflow:hidden;position:relative;display:flex;flex-direction:column}
+@media (max-width:440px){body{background:var(--lb)}.phone{width:100vw;height:100vh;border-radius:0;box-shadow:none}}
+.status{height:44px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:0 28px;font-size:14px;font-weight:600}
+.screen{flex:1;display:flex;flex-direction:column;min-height:0}
+.hidden{display:none!important}
+/* search screen */
+.brand{padding:6px 22px 0}.logo{font-weight:900;font-style:italic;font-size:30px;letter-spacing:.02em}
+.tag{font-size:14px;color:var(--muted);margin-top:2px}
+.searchcard{margin:16px 16px 0;background:#fff;border-radius:18px;padding:14px;box-shadow:0 2px 10px rgba(27,54,93,.08)}
+.field{display:flex;align-items:center;gap:10px;padding:8px 4px}.field+.field{border-top:1px solid var(--lb2)}
+.dot{width:12px;height:12px;border-radius:50%;flex:none}.dot.from{border:3px solid var(--navy)}.dot.to{background:var(--or)}
+.field input{border:0;outline:0;font:inherit;font-size:15px;color:var(--navy);width:100%;background:transparent}
+.when{display:flex;gap:8px;margin-top:10px}
+.when input{flex:1;border:0;border-radius:10px;background:var(--lb);padding:10px;font:inherit;font-size:14px;color:var(--navy)}
+.go{margin:14px 16px 0;width:calc(100% - 32px);border:0;border-radius:14px;background:var(--navy);color:#fff;font:inherit;font-weight:700;font-size:17px;padding:15px;cursor:pointer}
+.go:disabled{opacity:.6}
+.presets{padding:18px 16px 0;overflow:auto}
+.ph{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 4px 8px}
+.preset{display:block;width:100%;text-align:left;border:0;background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:8px;font:inherit;color:var(--navy);cursor:pointer;box-shadow:0 1px 4px rgba(27,54,93,.06)}
+.preset b{display:block;font-size:15px}.preset span{font-size:13px;color:var(--muted)}
+.progress{padding:14px 22px;color:var(--muted);font-size:14px;min-height:20px}
+/* results screen */
+.topbar{display:flex;align-items:center;gap:10px;padding:4px 14px 8px}
+.back{border:0;background:#fff;border-radius:50%;width:36px;height:36px;font-size:20px;color:var(--navy);cursor:pointer;box-shadow:0 1px 4px rgba(27,54,93,.12)}
+.trip{font-size:14px;line-height:1.25}.trip b{display:block;font-size:15px}
+.modes{display:flex;gap:6px;padding:0 14px 8px}
+.mode{flex:1;border:0;border-radius:10px;padding:8px;background:#fff;color:var(--navy);font:inherit;font-weight:700;font-size:14px;cursor:pointer}
+.mode.on{background:var(--navy);color:#fff}
+#map{height:290px;flex:none}
+.leaflet-container{background:#e8eef5}
+.sheet{flex:1;overflow:auto;background:var(--lb);border-radius:20px 20px 0 0;margin-top:-16px;position:relative;z-index:500;padding:8px 14px 24px;box-shadow:0 -4px 16px rgba(27,54,93,.1)}
+.grab{width:40px;height:5px;border-radius:3px;background:#b8c8db;margin:2px auto 10px}
+.def{font-size:12px;color:var(--muted);margin:0 2px 10px}
+.rcard{background:#fff;border-radius:16px;padding:12px 14px;margin-bottom:10px;border:2px solid transparent;cursor:pointer;position:relative}
+.rcard.sel.g{border-color:var(--google)}.rcard.sel.s{border-color:var(--stride)}
+.rhead{display:flex;justify-content:space-between;align-items:center}
+.who{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.g .who{color:var(--ort)}.s .who{color:#0a7a43}
+.sw{width:22px;height:5px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:middle}
+.rmain{display:flex;justify-content:space-between;align-items:flex-end;margin-top:6px}
+.big{font-size:34px;font-weight:800;line-height:1}.big small{font-size:15px;color:var(--muted);font-weight:600}
+.times{font-size:14px;font-weight:600;margin-top:2px}
+.nothing{text-align:right}.nothing b{font-size:24px;display:block;line-height:1}.nothing span{font-size:11px;color:var(--muted)}
+.g .nothing b{color:var(--ort)}.s .nothing b{color:#0a7a43}
+.chain{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:8px;font-size:13px;color:var(--muted)}
+.pill{border-radius:5px;padding:1px 6px;font-weight:700;font-size:12px;color:#fff}.pill.bus{background:#1a73e8}.pill.train{background:#c5221f}.pill.lrail{background:#e37400}
+.air{font-size:12px;color:var(--muted);margin-top:6px}
+.none{background:#fff;border-radius:16px;padding:14px;margin-bottom:10px;font-size:14px}
+.none b{display:block;font-size:16px;margin-bottom:2px}
+.sec{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 2px 6px}
+.steps{background:#fff;border-radius:16px;padding:4px 14px}
+.step{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--lb2);font-size:14px}.step:last-child{border-bottom:0}
+.si{width:10px;height:10px;border-radius:50%;margin-top:5px;flex:none}
+.si.walk{background:#9AA9BE}.si.bus{background:#1a73e8}.si.train{background:#c5221f}.si.lrail{background:#e37400}.si.wait{background:var(--or)}.si.end{background:var(--navy)}
+.sub{font-size:12px;color:var(--muted)}
+.why{background:#fff;border-radius:16px;padding:10px 14px;font-size:14px}.why div{padding:4px 0}
+.leaflet-tooltip{font-weight:700;font-size:12px;border-radius:8px}
+
+.phone.onlanding{background:linear-gradient(180deg,#F7FBFF 0%,#EAF3FB 55%,#D3E6F6 100%)}
+.phone.onlanding .status{color:#1B365D}
+#landing{color:#1B365D;padding:0 28px 34px;justify-content:space-between;position:relative;overflow:hidden}
+.lroute{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.9}
+.lhero{position:relative;text-align:center;margin-top:150px}
+.licon{width:104px;height:104px;margin:0 auto;border-radius:28px;overflow:hidden;box-shadow:0 18px 40px rgba(27,54,93,.22)}
+.licon svg{width:100%;height:100%;display:block}
+.lword{font-weight:900;font-style:italic;font-size:52px;letter-spacing:.04em;margin-top:24px;display:flex;justify-content:center}
+.lword span{display:inline-block}
+.ltag{font-size:17px;color:#4A6283;margin-top:6px}
+.lbottom{position:relative;display:flex;flex-direction:column;gap:14px}
+.lgo{border:0;border-radius:999px;background:#1B365D;color:#fff;font:inherit;font-weight:800;font-size:18px;padding:17px;cursor:pointer;box-shadow:0 10px 26px rgba(27,54,93,.28);display:flex;justify-content:center;gap:10px}
+.lgo span{display:inline-block;transition:transform .2s}.lgo:hover span{transform:translateX(4px)}
+.lfoot{text-align:center;font-size:12px;color:#4A6283;opacity:.8}
+.logo{display:flex;align-items:center;gap:10px}.bicon{width:34px;height:34px;border-radius:9px;overflow:hidden;display:inline-block}.bicon svg{width:100%;height:100%;display:block}
+
+.rcard{transition:transform .15s}.rcard:active{transform:scale(.98)}
+.lgo:active,.go:active,.preset:active{transform:scale(.97)}
+</style>
+</head>
+<body>
+<div class="phone onlanding">
+  <div class="status"><span id="clock">9:41</span><span>●●● ▮</span></div>
+
+  <div class="screen" id="landing">
+    <svg class="lroute" viewBox="0 0 390 800" preserveAspectRatio="none" aria-hidden="true">
+      <defs><clipPath id="lrClip"><rect class="lr-clip" x="-40" y="0" width="0" height="800"/></clipPath></defs>
+      <path class="lr-dots" d="M-20 560 C 50 500, 120 640, 195 600 S 320 500, 410 620" fill="none" stroke="#F57C1F" stroke-width="7" stroke-linecap="round" stroke-dasharray="0.1 18" clip-path="url(#lrClip)"/>
+      <path class="lr-line" pathLength="1" d="M-20 560 C 50 500, 120 640, 195 600 S 320 500, 410 620" fill="none" stroke="#0fb463" stroke-width="7" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="1"/>
+    </svg>
+    <div class="lhero">
+      <div class="licon" id="licon"></div>
+      <div class="lword" id="lword">STRIDE</div>
+      <div class="ltag">Know your route. Take it in stride.</div>
+    </div>
+    <div class="lbottom">
+      <button class="lgo" id="start">Plan a trip <span>→</span></button>
+      <div class="lfoot">Search powered by Telem</div>
+    </div>
+  </div>
+
+  <div class="screen hidden" id="search">
+    <div class="brand"><div class="logo"><span class="bicon" id="bicon"></span>STRIDE</div><div class="tag">Know your route. Take it in stride.</div></div>
+    <div class="searchcard">
+      <div class="field"><span class="dot from"></span><input id="origin" placeholder="From" value="880 W Maude Ave, Sunnyvale, CA 94085"></div>
+      <div class="field"><span class="dot to"></span><input id="destination" placeholder="To" value="Santa Clara University, Santa Clara, CA"></div>
+      <div class="when"><input id="date" type="date" value="2026-11-14"><input id="time" type="time" value="19:00"></div>
+    </div>
+    <button class="go" id="go">Find a route</button>
+    <div class="progress" id="progress"></div>
+    <div class="presets"><div class="ph">Test trips</div><div id="presetlist"></div></div>
+  </div>
+
+  <div class="screen hidden" id="results">
+    <div class="topbar"><button class="back" id="back">‹</button><div class="trip" id="tripline"></div></div>
+    <div class="modes"><button class="mode on" data-m="transit">Transit</button><button class="mode" data-m="walk">Walk</button></div>
+    <div id="map"></div>
+    <div class="sheet" id="sheet"></div>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const R = n => Math.round(n);
+const PRESETS = [
+  ["Morning · 8:00 AM · Walk", "Sunnyvale → The Meltdown", "880 W Maude Ave, Sunnyvale, CA 94085", "The Meltdown, 814 W Ahwanee Ave, Sunnyvale, CA 94085", "2026-11-15", "08:00", "walk"],
+  ["Afternoon · 2:00 PM · Walk", "Sunnyvale → Mexiqueña", "880 W Maude Ave, Sunnyvale, CA 94085", "Mexiqueña, 776 N Mathilda Ave, Sunnyvale, CA 94085", "2026-11-15", "14:00", "walk"],
+  ["Evening · 7:00 PM · Transit", "Sunnyvale → Santa Clara University", "880 W Maude Ave, Sunnyvale, CA 94085", "Santa Clara University, Santa Clara, CA", "2026-11-14", "19:00", "transit"],
+  ["Night · 8:00 PM · Walk", "Sunnyvale → Mexiqueña", "880 W Maude Ave, Sunnyvale, CA 94085", "Mexiqueña, 776 N Mathilda Ave, Sunnyvale, CA 94085", "2026-11-14", "20:00", "walk"],
+];
+let data, mode = "transit", focus = "stride", cache = {}, map, layer;
+const LOGO = `<svg viewBox="0 0 120 120"><rect width="120" height="120" rx="28" fill="#1B365D"/>
+  <path d="M82 32 H52 a15 15 0 0 0 0 30" fill="none" stroke="#F57C1F" stroke-width="10" stroke-linecap="round" stroke-dasharray="0.1 16"/>
+  <path class="lg-green" pathLength="1" d="M52 62 H68 a15 15 0 0 1 0 30 H38" fill="none" stroke="#0fb463" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <g class="lg-pin"><circle cx="84" cy="32" r="8" fill="#fff"/><circle cx="84" cy="32" r="3.5" fill="#1B365D"/></g>
+  <g class="lg-pin"><circle cx="36" cy="92" r="8" fill="#F57C1F"/><circle cx="36" cy="92" r="3.5" fill="#fff"/></g></svg>`;
+$("#licon").innerHTML = LOGO; $("#bicon").innerHTML = LOGO;
+// Motion (the vanilla-JS version of Framer Motion): springs, staggers, path drawing, count-ups
+const M = window.Motion || null;
+const anim = (el, kf, opt) => { if (M && el) try { return M.animate(el, kf, opt); } catch (e) {} };
+const spring = {type: "spring", stiffness: 260, damping: 22};
+function enter(screen){
+  anim(screen, {opacity: [0, 1], transform: ["translateX(24px)", "translateX(0px)"]}, {duration: .35, easing: [.22, 1, .36, 1]});
+}
+function landingIntro(){
+  const w = $("#lword"); w.innerHTML = [...w.textContent].map(c => `<span>${c}</span>`).join("");
+  if (!M){ document.querySelector(".lr-clip").setAttribute("width", 480); return; }
+  // dotted orange route traces the whole path; when it completes, a solid green line sweeps over it
+  const clip = document.querySelector(".lr-clip"), line = document.querySelector(".lr-line"), dots = document.querySelector(".lr-dots");
+  const tween = (dur, delay, fn) => new Promise(res => M.animate(0, 1, {duration: dur, delay, easing: [.45, 0, .2, 1], onUpdate: fn, onComplete: res}));
+  tween(2.0, .3, v => clip.setAttribute("width", 480 * v))         // reveal the dots left to right
+    .then(() => tween(.9, 0, v => { line.style.strokeDashoffset = 1 - v; dots.style.opacity = 1 - v; }));
+  anim("#licon", {opacity: [0, 1], transform: ["translateY(-40px) scale(.7) rotate(-12deg)", "translateY(0px) scale(1) rotate(0deg)"]}, {type: "spring", stiffness: 180, damping: 14, delay: .2});
+  const g = document.querySelector("#licon .lg-green");
+  if (g){ g.style.strokeDasharray = "1"; anim(g, {strokeDashoffset: [1, 0]}, {duration: .8, delay: .7, easing: "ease-out"}); }
+  anim("#licon .lg-pin", {transform: ["scale(0)", "scale(1)"], transformOrigin: "center", transformBox: "fill-box"}, {...spring, delay: M.stagger(.2, {start: 1.1})});
+  anim(document.querySelectorAll("#lword span"), {opacity: [0, 1], transform: ["translateY(28px) skewX(-12deg)", "translateY(0px) skewX(0deg)"]}, {type: "spring", stiffness: 300, damping: 18, delay: M.stagger(.06, {start: .5})});
+  anim(".ltag", {opacity: [0, 1], transform: ["translateY(10px)", "translateY(0px)"]}, {duration: .6, delay: 1.0});
+  anim(".lbottom", {opacity: [0, 1], transform: ["translateY(30px)", "translateY(0px)"]}, {...spring, delay: 1.3});
+  setTimeout(() => anim("#licon", {transform: ["translateY(0px)", "translateY(-7px)", "translateY(0px)"]}, {duration: 3.2, repeat: Infinity, easing: "ease-in-out"}), 1800);
+}
+landingIntro();
+$("#start").onclick = () => { $("#landing").classList.add("hidden"); $("#search").classList.remove("hidden"); document.querySelector(".phone").classList.remove("onlanding"); enter($("#search"));
+  anim(document.querySelectorAll(".preset"), {opacity: [0, 1], transform: ["translateY(12px)", "translateY(0px)"]}, {duration: .4, delay: M ? M.stagger(.06, {start: .15}) : 0}); };
+const steps = ["Getting every route…", "Finding open places along the way (Telem)…", "Checking opening hours…", "Counting minutes with nothing open nearby…"];
+
+setInterval(() => $("#clock").textContent = new Date().toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}).replace(/\s?[AP]M/, ""), 1000);
+$("#presetlist").innerHTML = PRESETS.map((p, i) => `<button class="preset" data-p="${i}"><b>${esc(p[0])}</b><span>${esc(p[1])}</span></button>`).join("");
+document.querySelectorAll("[data-p]").forEach(b => b.onclick = () => {
+  const p = PRESETS[+b.dataset.p]; $("#origin").value = p[2]; $("#destination").value = p[3]; $("#date").value = p[4]; $("#time").value = p[5];
+  search(p[6]);
+});
+$("#go").onclick = () => search("transit");
+$("#back").onclick = () => { $("#results").classList.add("hidden"); $("#search").classList.remove("hidden"); enter($("#search")); };
+document.querySelectorAll(".mode").forEach(b => b.onclick = () => { if (b.dataset.m !== mode) run(b.dataset.m); });
+
+function search(m){ cache = {}; run(m); }
+
+async function run(m){
+  mode = m;
+  document.querySelectorAll(".mode").forEach(b => b.classList.toggle("on", b.dataset.m === m));
+  if (cache[m]) return show(cache[m]);
+  $("#go").disabled = true;
+  let i = 0; $("#progress").textContent = steps[0];
+  const t = setInterval(() => { if (i < steps.length - 1) $("#progress").textContent = steps[++i]; }, 7000);
+  try {
+    const r = await fetch("/api/plan", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({
+      origin:$("#origin").value, destination:$("#destination").value, end_time:`${$("#date").value}T${$("#time").value}`, max_extra_minutes:60, mode:m})});
+    const d = await r.json();
+    if (!r.ok || d.error) throw new Error(d.detail || d.error);
+    cache[m] = d; if (mode === m) show(d);
+    $("#progress").textContent = "";
+  } catch (e) { $("#progress").textContent = e.message; }
+  finally { clearInterval(t); $("#go").disabled = false; }
+}
+
+const G = () => data.options.find(o => o.role === "google");
+const S = () => data.options.find(o => o.role === "stride");
+const cur = () => focus === "google" ? G() : (S() || G());
+const pc = v => ["HEAVY_RAIL","COMMUTER_TRAIN","RAIL","TRAIN"].includes(v) ? "train" : ["LIGHT_RAIL","TRAM"].includes(v) ? "lrail" : "bus";
+const chain = o => o.segments.filter(s => s.kind !== "wait" && !(s.kind === "walk" && s.minutes < 1)).map(s =>
+  s.kind === "walk" ? `Walk ${R(s.minutes)}` : `<span class="pill ${pc(s.vehicle)}">${esc(s.line)}</span>`).join(" › ");
+const until = h => { const m = String(h).match(/[-–]\s*([^,]+)$/); return /24 hours/i.test(h) ? "open 24 hours" : m ? `open till ${m[1].trim()}` : h; };
+
+function show(d){
+  data = d; focus = S() ? "stride" : "google";
+  const wasHidden = $("#results").classList.contains("hidden");
+  $("#search").classList.add("hidden"); $("#results").classList.remove("hidden");
+  if (wasHidden) enter($("#results"));
+  const dt = new Date(`${$("#date").value}T${$("#time").value}`);
+  $("#tripline").innerHTML = `<b>${esc($("#origin").value.split(",")[0])} → ${esc($("#destination").value.split(",")[0])}</b>${dt.toLocaleString([], {weekday:"short", hour:"numeric", minute:"2-digit"})}`;
+  render();
+}
+
+function card(o, cls, name){
+  const a = o.air;
+  return `<div class="rcard ${cls} ${(cls==="g") === (focus==="google") ? "sel" : ""}" data-f="${cls==="g"?"google":"stride"}">
+    <div class="rhead"><span class="who"><span class="sw" style="background:${cls==="g"?"var(--google)":"var(--stride)"}"></span>${name}</span><span class="sub">leave ${esc(o.leave_at)}</span></div>
+    <div class="rmain"><div><div class="big">${o.total_minutes}<small> min</small></div><div class="times">${esc(o.leave_at)} → ${esc(o.arrive_at)}</div></div>
+      <div class="nothing"><b>${R(o.minutes_without_open_door)} min</b><span>nothing open nearby</span></div></div>
+    <div class="chain">${chain(o)}</div>
+    ${a ? `<div class="air">Outside ${R(a.minutes_outside)} min · AQI ${a.aqi_avg} ${a.aqi_avg<=50?"good":a.aqi_avg<=100?"moderate":"poor"}${o.conditions && o.conditions.daylight===false ? " · after dark" : o.conditions && o.conditions.daylight ? " · daylight" : ""}</div>` : ""}
+  </div>`;
+}
+
+function render(){
+  const g = G(), s = S(), o = cur();
+  let h = `<div class="grab"></div><div class="def">Nothing open nearby = minutes walking or waiting with no open shop, café or gas station within a 1-minute walk.</div>`;
+  h += card(g, "g", "Google · fastest");
+  h += s ? card(s, "s", "Stride · most open") : `<div class="none"><b>No better route for this departure</b>${esc(data.notes[0] || "")}</div>`;
+  h += `<div class="sec">${focus === "google" ? "Google" : "Stride"}: your trip</div><div class="steps">`;
+  for (const x of o.segments){
+    if (x.kind === "walk"){ if (x.minutes < 1) continue; h += `<div class="step"><span class="si walk"></span><div><b>Walk ${R(x.minutes)} min</b><div class="sub">${x.meters} m · ${esc(x.start)}</div></div></div>`; }
+    else if (x.kind === "ride") h += `<div class="step"><span class="si ${pc(x.vehicle)}"></span><div><span class="pill ${pc(x.vehicle)}">${esc(x.line)}</span> <b>${esc(x.from)}</b> → <b>${esc(x.to)}</b><div class="sub">${esc(x.start)} – ${esc(x.end)}</div></div></div>`;
+    else { const w = o.waits.find(y => y.stop === x.stop && y.start === x.start) || {}; const n = w.nearest_open;
+      h += `<div class="step"><span class="si wait"></span><div><b>Wait ${R(x.minutes)} min</b> at ${esc(x.stop)}<div class="sub">${n ? `${esc(n.name)} ${n.distance_m} m away, ${esc(until(n.hours_today))}` : "Nothing open nearby"}</div></div></div>`; }
+  }
+  h += `<div class="step"><span class="si end"></span><div><b>Arrive ${esc(o.arrive_at)}</b></div></div></div>`;
+  if (s){
+    const passed = [...new Set(s.open_doors.map(p => p.name).concat(s.waits.filter(w => w.covered && w.nearest_open).map(w => w.nearest_open.name)))];
+    h += `<div class="sec">Why Stride chose this</div><div class="why">
+      <div><b>${R(s.minutes_without_open_door)} min</b> with nothing open nearby, instead of ${R(g.minutes_without_open_door)} min.</div>
+      ${s.walk_minutes < g.walk_minutes - 1 ? `<div>Less walking: ${R(s.walk_minutes)} min instead of ${R(g.walk_minutes)}.</div>` : ""}
+      ${passed.length ? `<div>Passes ${passed.slice(0,3).map(esc).join(", ")}.</div>` : ""}
+      <div>Same departure, ${esc(s.leave_at)}. Arrive ${esc(s.arrive_at)} instead of ${esc(g.arrive_at)}.</div></div>`;
+  }
+  const skipped = (o.skipped_places || []);
+  if (skipped.length) h += `<div class="sec">Not counted</div><div class="why">${skipped.map(p => `<div><b>${esc(p.name)}</b>: ${esc(p.reason)}</div>`).join("")}</div>`;
+  $("#sheet").innerHTML = h; $("#sheet").scrollTop = 0;
+  anim(document.querySelectorAll(".rcard, .none"), {opacity: [0, 1], transform: ["translateY(16px)", "translateY(0px)"]}, {...spring, delay: M ? M.stagger(.08) : 0});
+  if (M) document.querySelectorAll(".nothing b, .big").forEach(el => { const n = parseFloat(el.textContent); if (isNaN(n)) return;
+    const tail = el.innerHTML.replace(/^\s*\d+/, ""); M.animate(0, n, {duration: .8, easing: [.22, 1, .36, 1], onUpdate: v => el.innerHTML = Math.round(v) + tail}); });
+  document.querySelectorAll(".rcard").forEach(c => c.onclick = () => { if (c.dataset.f !== focus){ focus = c.dataset.f; render(); } });
+  draw();
+}
+
+function line(o, color, w, op){
+  const pts = [];
+  for (const l of o.map){
+    pts.push(...l.coords);
+    L.polyline(l.coords, {color:"#fff", weight:w + 5, opacity:op, lineCap:"round", lineJoin:"round"}).addTo(layer);
+    L.polyline(l.coords, {color, weight:w, opacity:op, lineCap:"round", lineJoin:"round", dashArray: l.kind === "walk" && !l.covered ? "1 12" : null}).addTo(layer);
+  }
+  return pts;
+}
+
+function draw(){
+  if (map){ map.remove(); map = null; }
+  map = L.map("map", {zoomControl:false, attributionControl:true});
+  const u = n => `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_${n}/MapServer/tile/{z}/{y}/{x}`;
+  L.tileLayer(u("Base"), {maxZoom:16, attribution:"Esri, © OpenStreetMap contributors"}).addTo(map);
+  layer = L.layerGroup().addTo(map);
+  L.tileLayer(u("Reference"), {maxZoom:16, pane:"overlayPane"}).addTo(map);
+  const g = G(), s = S(), o = cur();
+  const other = o === g ? s : g;
+  if (other) line(other, other === g ? "#ff6a13" : "#0fb463", 5, .5);
+  const pts = line(o, o === g ? "#ff6a13" : "#0fb463", 7, 1);
+  if (pts.length){
+    L.circleMarker(pts[0], {radius:7, color:"#fff", weight:3, fillColor:"#1B365D", fillOpacity:1}).bindTooltip("Start", {permanent:true, direction:"left"}).addTo(layer);
+    L.circleMarker(pts.at(-1), {radius:7, color:"#fff", weight:3, fillColor:"#F57C1F", fillOpacity:1}).bindTooltip("Arrive", {permanent:true, direction:"right"}).addTo(layer);
+  }
+  for (const w of o.waits) L.circleMarker([w.lat, w.lng], {radius:9, color:w.covered ? "#0fb463" : "#F57C1F", weight:3, fillColor:"#fff", fillOpacity:1}).bindTooltip(`Wait ${R(w.minutes)} min`, {permanent:true, direction:"top", offset:[0,-8]}).addTo(layer);
+  for (const p of o.open_doors) L.circleMarker([p.lat, p.lng], {radius:5, color:"#fff", weight:2, fillColor:"#0fb463", fillOpacity:1}).bindTooltip(esc(p.name)).addTo(layer);
+  if (pts.length) map.fitBounds(pts, {padding:[24,24]});
+}
+</script>
+</body>
+</html>
