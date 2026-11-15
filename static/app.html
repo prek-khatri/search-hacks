@@ -87,6 +87,52 @@ body{margin:0;min-height:100vh;background:#dfe9f3;display:flex;align-items:cente
 
 .rcard{transition:transform .15s}.rcard:active{transform:scale(.98)}
 .lgo:active,.go:active,.preset:active{transform:scale(.97)}
+
+.air{font-size:13px;color:var(--navy);margin-top:8px;background:var(--lb);border-radius:8px;padding:6px 8px}.air b{font-size:14px}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:14px 0 8px;padding-bottom:2px}
+.tab{flex:none;border:0;border-radius:999px;padding:8px 13px;background:#fff;color:var(--navy);font:inherit;font-weight:700;font-size:13px;cursor:pointer}
+.tab.on{background:var(--navy);color:#fff}
+.step.opt{align-items:center}
+.tg{font-size:10px;font-weight:800;border-radius:4px;padding:1px 5px;color:#fff;margin-left:4px}.tg.g{background:var(--google)}.tg.s{background:var(--stride)}
+.bdg{font-size:10px;font-weight:700;border-radius:4px;padding:1px 5px;margin-left:4px}.bdg.confirmed{background:var(--lb2);color:var(--navy)}.bdg.listed{background:#eef1f5;color:var(--muted)}.bdg.uncertain{background:#FDEBDD;color:var(--ort)}
+.jump{display:flex;flex-direction:column;gap:5px}
+.jump button{border:0;border-radius:999px;background:#fff;color:var(--navy);font:inherit;font-size:12px;font-weight:700;padding:6px 10px;box-shadow:0 2px 6px rgba(0,0,0,.18);cursor:pointer;text-align:left}
+.jump button.on{background:var(--navy);color:#fff}
+
+.preset.recent{display:flex;align-items:center;gap:12px}
+.clock{width:34px;height:34px;border-radius:50%;background:var(--lb);flex:none;position:relative}
+.clock::before{content:"";position:absolute;left:50%;top:50%;width:14px;height:14px;border:2px solid var(--muted);border-radius:50%;transform:translate(-50%,-50%)}
+.clock::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:5px;border-left:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:translate(-1px,-4px)}
+.rt{flex:1;min-width:0}.rt b{display:block;font-size:15px}.rt span{font-size:12px;color:var(--muted)}
+.chev{font-size:22px;color:#9AA9BE}
+
+#map .leaflet-control-zoom{margin-bottom:26px;border:0;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+#map .leaflet-control-zoom a{width:34px;height:34px;line-height:34px;font-size:18px;color:var(--navy)}
+
+.verdict{display:flex;gap:10px;align-items:center;border-radius:14px;padding:10px 12px;margin-bottom:10px;font-size:14px}
+.verdict b{font-size:15px}
+.verdict.win{background:#E3F6EC;color:#0a5a33}.verdict.same{background:#fff;color:var(--navy)}
+.vd{width:22px;height:22px;border-radius:50%;flex:none;position:relative}
+.verdict.win .vd{background:#0fb463}.verdict.same .vd{background:var(--navy)}
+.vd::after{content:"";position:absolute;left:7px;top:4px;width:5px;height:10px;border-right:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(45deg)}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#fff;border-radius:12px;padding:4px;overflow:visible}
+.tab{padding:8px 0;border-radius:9px;background:transparent}
+.link{display:block;width:100%;margin-top:10px;border:0;background:#fff;border-radius:12px;padding:12px;font:inherit;font-weight:700;font-size:14px;color:var(--navy);cursor:pointer;text-align:left}
+.air{margin:0 0 8px}
+
+.nowchip{border:0;border-radius:10px;background:var(--lb);color:var(--navy);font:inherit;font-size:13px;font-weight:700;padding:0 12px;cursor:pointer;white-space:nowrap}
+.nowchip.on{background:var(--navy);color:#fff}
+.strip{display:flex;gap:2px;height:8px;margin-top:10px;border-radius:4px;overflow:hidden}
+.strip i{display:block;min-width:3px}.strip i.ride{background:#c9d6e6}.strip i.open{background:#0fb463}.strip i.none{background:#F57C1F}
+.verdict.checking{background:#fff}
+.spin{width:20px;height:20px;border-radius:50%;border:3px solid var(--lb2);border-top-color:var(--navy);flex:none;animation:spin 0.9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dots{color:var(--muted)!important}
+.skel{cursor:default}.sk{height:12px;border-radius:6px;background:linear-gradient(90deg,#eef3f9,#dfe8f2,#eef3f9);background-size:200% 100%;animation:sh 1.2s infinite;margin:8px 0}
+.w40{width:40%}.w70{width:70%}.w55{width:55%}@keyframes sh{to{background-position:-200% 0}}
+.share{width:100%;border:0;border-radius:12px;background:#fff;color:var(--navy);font:inherit;font-weight:700;font-size:14px;padding:11px;margin-bottom:4px;cursor:pointer}
+.retry{border:0;border-radius:8px;background:var(--navy);color:#fff;font:inherit;font-size:13px;font-weight:700;padding:5px 10px;margin-left:6px;cursor:pointer}
+.tab[disabled]{opacity:.4;cursor:default}
 </style>
 </head>
 <body>
@@ -115,11 +161,11 @@ body{margin:0;min-height:100vh;background:#dfe9f3;display:flex;align-items:cente
     <div class="searchcard">
       <div class="field"><span class="dot from"></span><input id="origin" placeholder="From" value="880 W Maude Ave, Sunnyvale, CA 94085"></div>
       <div class="field"><span class="dot to"></span><input id="destination" placeholder="To" value="Santa Clara University, Santa Clara, CA"></div>
-      <div class="when"><input id="date" type="date" value="2026-11-14"><input id="time" type="time" value="19:00"></div>
+      <div class="when"><button class="nowchip" id="now">Leave now</button><input id="date" type="date" value="2026-11-14"><input id="time" type="time" value="19:00"></div>
     </div>
     <button class="go" id="go">Find a route</button>
     <div class="progress" id="progress"></div>
-    <div class="presets"><div class="ph">Test trips</div><div id="presetlist"></div></div>
+    <div class="presets"><div class="ph">Recent trips</div><div id="presetlist"></div></div>
   </div>
 
   <div class="screen hidden" id="results">
@@ -140,7 +186,7 @@ const PRESETS = [
   ["Evening · 7:00 PM · Transit", "Sunnyvale → Santa Clara University", "880 W Maude Ave, Sunnyvale, CA 94085", "Santa Clara University, Santa Clara, CA", "2026-11-14", "19:00", "transit"],
   ["Night · 8:00 PM · Walk", "Sunnyvale → Mexiqueña", "880 W Maude Ave, Sunnyvale, CA 94085", "Mexiqueña, 776 N Mathilda Ave, Sunnyvale, CA 94085", "2026-11-14", "20:00", "walk"],
 ];
-let data, mode = "transit", focus = "stride", cache = {}, map, layer;
+let data, mode = "transit", focus = "stride", cache = {}, map, layer, tab = "trip", showAll = false;
 const LOGO = `<svg viewBox="0 0 120 120"><rect width="120" height="120" rx="28" fill="#1B365D"/>
   <path d="M82 32 H52 a15 15 0 0 0 0 30" fill="none" stroke="#F57C1F" stroke-width="10" stroke-linecap="round" stroke-dasharray="0.1 16"/>
   <path class="lg-green" pathLength="1" d="M52 62 H68 a15 15 0 0 1 0 30 H38" fill="none" stroke="#0fb463" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -156,12 +202,15 @@ function enter(screen){
 }
 function landingIntro(){
   const w = $("#lword"); w.innerHTML = [...w.textContent].map(c => `<span>${c}</span>`).join("");
-  if (!M){ document.querySelector(".lr-clip").setAttribute("width", 480); return; }
   // dotted orange route traces the whole path; when it completes, a solid green line sweeps over it
   const clip = document.querySelector(".lr-clip"), line = document.querySelector(".lr-line"), dots = document.querySelector(".lr-dots");
-  const tween = (dur, delay, fn) => new Promise(res => M.animate(0, 1, {duration: dur, delay, easing: [.45, 0, .2, 1], onUpdate: fn, onComplete: res}));
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const tween = (dur, delay, fn) => new Promise(res => setTimeout(() => { const t0 = performance.now();
+    const step = now => { const t = Math.min(1, (now - t0) / (dur * 1000)); fn(ease(t)); t < 1 ? requestAnimationFrame(step) : res(); };
+    requestAnimationFrame(step); }, delay * 1000));
   tween(2.0, .3, v => clip.setAttribute("width", 480 * v))         // reveal the dots left to right
     .then(() => tween(.9, 0, v => { line.style.strokeDashoffset = 1 - v; dots.style.opacity = 1 - v; }));
+  if (!M) return;
   anim("#licon", {opacity: [0, 1], transform: ["translateY(-40px) scale(.7) rotate(-12deg)", "translateY(0px) scale(1) rotate(0deg)"]}, {type: "spring", stiffness: 180, damping: 14, delay: .2});
   const g = document.querySelector("#licon .lg-green");
   if (g){ g.style.strokeDasharray = "1"; anim(g, {strokeDashoffset: [1, 0]}, {duration: .8, delay: .7, easing: "ease-out"}); }
@@ -171,18 +220,24 @@ function landingIntro(){
   anim(".lbottom", {opacity: [0, 1], transform: ["translateY(30px)", "translateY(0px)"]}, {...spring, delay: 1.3});
   setTimeout(() => anim("#licon", {transform: ["translateY(0px)", "translateY(-7px)", "translateY(0px)"]}, {duration: 3.2, repeat: Infinity, easing: "ease-in-out"}), 1800);
 }
-landingIntro();
-$("#start").onclick = () => { $("#landing").classList.add("hidden"); $("#search").classList.remove("hidden"); document.querySelector(".phone").classList.remove("onlanding"); enter($("#search"));
+let seen = false; try { seen = localStorage.getItem("stride_seen") === "1"; } catch (e) {}
+const skipLanding = seen && !location.search.includes("intro");
+if (skipLanding){ $("#landing").classList.add("hidden"); $("#search").classList.remove("hidden"); document.querySelector(".phone").classList.remove("onlanding"); }
+else landingIntro();
+$("#start").onclick = () => { try { localStorage.setItem("stride_seen", "1"); } catch (e) {} $("#landing").classList.add("hidden"); $("#search").classList.remove("hidden"); document.querySelector(".phone").classList.remove("onlanding"); enter($("#search"));
   anim(document.querySelectorAll(".preset"), {opacity: [0, 1], transform: ["translateY(12px)", "translateY(0px)"]}, {duration: .4, delay: M ? M.stagger(.06, {start: .15}) : 0}); };
 const steps = ["Getting every route…", "Finding open places along the way (Telem)…", "Checking opening hours…", "Counting minutes with nothing open nearby…"];
 
 setInterval(() => $("#clock").textContent = new Date().toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}).replace(/\s?[AP]M/, ""), 1000);
-$("#presetlist").innerHTML = PRESETS.map((p, i) => `<button class="preset" data-p="${i}"><b>${esc(p[0])}</b><span>${esc(p[1])}</span></button>`).join("");
+$("#presetlist").innerHTML = PRESETS.map((p, i) => { const d = new Date(`${p[4]}T${p[5]}`);
+  return `<button class="preset recent" data-p="${i}"><span class="clock"></span><span class="rt"><b>${esc(p[3].split(",")[0])}</b><span>From ${esc(p[2].split(",")[0])} · ${d.toLocaleString([], {weekday:"short", hour:"numeric", minute:"2-digit"})} · ${p[6] === "walk" ? "Walk" : "Transit"}</span></span><span class="chev">›</span></button>`; }).join("");
 document.querySelectorAll("[data-p]").forEach(b => b.onclick = () => {
   const p = PRESETS[+b.dataset.p]; $("#origin").value = p[2]; $("#destination").value = p[3]; $("#date").value = p[4]; $("#time").value = p[5];
   search(p[6]);
 });
 $("#go").onclick = () => search("transit");
+$("#now").onclick = () => { const n = new Date(), z = x => String(x).padStart(2, "0");
+  $("#date").value = `${n.getFullYear()}-${z(n.getMonth() + 1)}-${z(n.getDate())}`; $("#time").value = `${z(n.getHours())}:${z(n.getMinutes())}`; $("#now").classList.add("on"); };
 $("#back").onclick = () => { $("#results").classList.add("hidden"); $("#search").classList.remove("hidden"); enter($("#search")); };
 document.querySelectorAll(".mode").forEach(b => b.onclick = () => { if (b.dataset.m !== mode) run(b.dataset.m); });
 
@@ -192,18 +247,27 @@ async function run(m){
   mode = m;
   document.querySelectorAll(".mode").forEach(b => b.classList.toggle("on", b.dataset.m === m));
   if (cache[m]) return show(cache[m]);
-  $("#go").disabled = true;
-  let i = 0; $("#progress").textContent = steps[0];
-  const t = setInterval(() => { if (i < steps.length - 1) $("#progress").textContent = steps[++i]; }, 7000);
+  const body = {origin:$("#origin").value, destination:$("#destination").value, end_time:`${$("#date").value}T${$("#time").value}`, mode:m};
+  $("#go").disabled = true; $("#progress").textContent = "Finding routes…";
   try {
-    const r = await fetch("/api/plan", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({
-      origin:$("#origin").value, destination:$("#destination").value, end_time:`${$("#date").value}T${$("#time").value}`, max_extra_minutes:60, mode:m})});
+    const r = await fetch("/api/google", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body)});
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail);
+    if (mode === m) show({options: [d.option], partial: true, notes: [], trace: {}});
+    $("#progress").textContent = "";
+  } catch (e) {
+    $("#go").disabled = false;
+    $("#progress").innerHTML = `We couldn't find a route for that trip. Check the addresses and time. <button class="retry" id="retry">Try again</button>`;
+    $("#retry").onclick = () => run(m); return;
+  }
+  try {
+    const r = await fetch("/api/plan", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({...body, max_extra_minutes:60})});
     const d = await r.json();
     if (!r.ok || d.error) throw new Error(d.detail || d.error);
     cache[m] = d; if (mode === m) show(d);
-    $("#progress").textContent = "";
-  } catch (e) { $("#progress").textContent = e.message; }
-  finally { clearInterval(t); $("#go").disabled = false; }
+  } catch (e) {
+    if (mode === m && data && data.partial){ data.failed = true; render(); }
+  } finally { $("#go").disabled = false; }
 }
 
 const G = () => data.options.find(o => o.role === "google");
@@ -215,7 +279,8 @@ const chain = o => o.segments.filter(s => s.kind !== "wait" && !(s.kind === "wal
 const until = h => { const m = String(h).match(/[-–]\s*([^,]+)$/); return /24 hours/i.test(h) ? "open 24 hours" : m ? `open till ${m[1].trim()}` : h; };
 
 function show(d){
-  data = d; focus = S() ? "stride" : "google";
+  const keepTab = data && data.partial && !d.partial;
+  data = d; focus = S() ? "stride" : "google"; if (!keepTab) tab = "trip"; showAll = false;
   const wasHidden = $("#results").classList.contains("hidden");
   $("#search").classList.add("hidden"); $("#results").classList.remove("hidden");
   if (wasHidden) enter($("#results"));
@@ -224,46 +289,105 @@ function show(d){
   render();
 }
 
+function strip(o){
+  if (o.minutes_without_open_door == null) return "";
+  const groups = []; let g = null;
+  for (const l of o.map){ if (l.kind === "walk"){ if (!g){ g = []; groups.push(g); } g.push(l); } else g = null; }
+  const len = c => c.slice(1).reduce((a, p, k) => a + Math.hypot(p[0] - c[k][0], p[1] - c[k][1]), 0);
+  const parts = []; let wi = 0;
+  for (const x of o.segments){
+    if (x.kind === "ride") parts.push([x.minutes, "ride"]);
+    else if (x.kind === "wait"){ const w = o.waits.find(y => y.stop === x.stop && y.start === x.start); parts.push([x.minutes, w && w.covered ? "open" : "none"]); }
+    else if (x.minutes > 0){ const gr = groups[wi++] || []; const tot = gr.reduce((a, l) => a + len(l.coords), 0) || 1;
+      const op = gr.filter(l => l.covered).reduce((a, l) => a + len(l.coords), 0) / tot;
+      if (op > 0) parts.push([x.minutes * op, "open"]); if (op < 1) parts.push([x.minutes * (1 - op), "none"]); }
+  }
+  return `<div class="strip">${parts.map(([m, k]) => `<i class="${k}" style="flex:${Math.max(m, .3)}"></i>`).join("")}</div>`;
+}
+
 function card(o, cls, name){
-  const a = o.air;
+  const a = o.air, pending = o.minutes_without_open_door == null;
   return `<div class="rcard ${cls} ${(cls==="g") === (focus==="google") ? "sel" : ""}" data-f="${cls==="g"?"google":"stride"}">
     <div class="rhead"><span class="who"><span class="sw" style="background:${cls==="g"?"var(--google)":"var(--stride)"}"></span>${name}</span><span class="sub">leave ${esc(o.leave_at)}</span></div>
     <div class="rmain"><div><div class="big">${o.total_minutes}<small> min</small></div><div class="times">${esc(o.leave_at)} → ${esc(o.arrive_at)}</div></div>
-      <div class="nothing"><b>${R(o.minutes_without_open_door)} min</b><span>nothing open nearby</span></div></div>
-    <div class="chain">${chain(o)}</div>
-    ${a ? `<div class="air">Outside ${R(a.minutes_outside)} min · AQI ${a.aqi_avg} ${a.aqi_avg<=50?"good":a.aqi_avg<=100?"moderate":"poor"}${o.conditions && o.conditions.daylight===false ? " · after dark" : o.conditions && o.conditions.daylight ? " · daylight" : ""}</div>` : ""}
+      <div class="nothing">${pending ? `<b class="dots">…</b><span>checking open places</span>` : `<b>${R(o.minutes_without_open_door)} min</b><span>nothing open nearby</span>`}</div></div>
+    <div class="chain">${chain(o)}</div>${strip(o)}
   </div>`;
 }
 
 function render(){
   const g = G(), s = S(), o = cur();
   let h = `<div class="grab"></div><div class="def">Nothing open nearby = minutes walking or waiting with no open shop, café or gas station within a 1-minute walk.</div>`;
+  if (data.partial){
+    h += data.failed ? `<div class="verdict same"><div><b>Couldn't check open places right now.</b> Google's route is shown. <button class="retry" id="retry2">Try again</button></div></div>`
+                     : `<div class="verdict checking"><span class="spin"></span><div><b>Checking open places along every route…</b> Google's route is ready below.</div></div>`;
+  } else if (s){
+    const dt = s.total_minutes - g.total_minutes, dn = R(g.minutes_without_open_door) - R(s.minutes_without_open_door);
+    h += `<div class="verdict win"><span class="vd"></span><div><b>${dt > 0 ? `+${dt} min` : "Same time"} · −${dn} min with nothing open</b><br>Stride's route, leaving at the same time as Google's</div></div>`;
+  } else h += `<div class="verdict same"><span class="vd"></span><div><b>Google's route is already your best</b> for this departure</div></div>`;
   h += card(g, "g", "Google · fastest");
-  h += s ? card(s, "s", "Stride · most open") : `<div class="none"><b>No better route for this departure</b>${esc(data.notes[0] || "")}</div>`;
-  h += `<div class="sec">${focus === "google" ? "Google" : "Stride"}: your trip</div><div class="steps">`;
-  for (const x of o.segments){
-    if (x.kind === "walk"){ if (x.minutes < 1) continue; h += `<div class="step"><span class="si walk"></span><div><b>Walk ${R(x.minutes)} min</b><div class="sub">${x.meters} m · ${esc(x.start)}</div></div></div>`; }
-    else if (x.kind === "ride") h += `<div class="step"><span class="si ${pc(x.vehicle)}"></span><div><span class="pill ${pc(x.vehicle)}">${esc(x.line)}</span> <b>${esc(x.from)}</b> → <b>${esc(x.to)}</b><div class="sub">${esc(x.start)} – ${esc(x.end)}</div></div></div>`;
-    else { const w = o.waits.find(y => y.stop === x.stop && y.start === x.start) || {}; const n = w.nearest_open;
-      h += `<div class="step"><span class="si wait"></span><div><b>Wait ${R(x.minutes)} min</b> at ${esc(x.stop)}<div class="sub">${n ? `${esc(n.name)} ${n.distance_m} m away, ${esc(until(n.hours_today))}` : "Nothing open nearby"}</div></div></div>`; }
-  }
-  h += `<div class="step"><span class="si end"></span><div><b>Arrive ${esc(o.arrive_at)}</b></div></div></div>`;
-  if (s){
-    const passed = [...new Set(s.open_doors.map(p => p.name).concat(s.waits.filter(w => w.covered && w.nearest_open).map(w => w.nearest_open.name)))];
-    h += `<div class="sec">Why Stride chose this</div><div class="why">
-      <div><b>${R(s.minutes_without_open_door)} min</b> with nothing open nearby, instead of ${R(g.minutes_without_open_door)} min.</div>
-      ${s.walk_minutes < g.walk_minutes - 1 ? `<div>Less walking: ${R(s.walk_minutes)} min instead of ${R(g.walk_minutes)}.</div>` : ""}
-      ${passed.length ? `<div>Passes ${passed.slice(0,3).map(esc).join(", ")}.</div>` : ""}
-      <div>Same departure, ${esc(s.leave_at)}. Arrive ${esc(s.arrive_at)} instead of ${esc(g.arrive_at)}.</div></div>`;
-  }
-  const skipped = (o.skipped_places || []);
-  if (skipped.length) h += `<div class="sec">Not counted</div><div class="why">${skipped.map(p => `<div><b>${esc(p.name)}</b>: ${esc(p.reason)}</div>`).join("")}</div>`;
+  if (s) h += card(s, "s", "Stride · more open");
+  else if (data.partial && !data.failed) h += `<div class="rcard skel"><div class="sk w40"></div><div class="sk w70"></div><div class="sk w55"></div></div>`;
+  if (!data.partial) h += `<button class="share" id="share">Share this plan</button>`;
+  const tabs = [["trip","Steps"],["why","Why"],["ev","Places"]];
+  if (data.partial) tab = "trip";
+  h += `<div class="tabs">${tabs.map(([k,l]) => `<button class="tab ${tab===k?"on":""}" data-t="${k}" ${data.partial && k !== "trip" ? "disabled" : ""}>${l}</button>`).join("")}</div>`;
+  h += tab === "trip" ? tripTab(o) : tab === "why" ? whyTab() + (showAll ? allTab() : `<button class="link" id="showall">See all ${data.options.length} routes Stride compared ›</button>`) : evTab(o);
   $("#sheet").innerHTML = h; $("#sheet").scrollTop = 0;
   anim(document.querySelectorAll(".rcard, .none"), {opacity: [0, 1], transform: ["translateY(16px)", "translateY(0px)"]}, {...spring, delay: M ? M.stagger(.08) : 0});
   if (M) document.querySelectorAll(".nothing b, .big").forEach(el => { const n = parseFloat(el.textContent); if (isNaN(n)) return;
     const tail = el.innerHTML.replace(/^\s*\d+/, ""); M.animate(0, n, {duration: .8, easing: [.22, 1, .36, 1], onUpdate: v => el.innerHTML = Math.round(v) + tail}); });
   document.querySelectorAll(".rcard").forEach(c => c.onclick = () => { if (c.dataset.f !== focus){ focus = c.dataset.f; render(); } });
+  const r2 = $("#retry2"); if (r2) r2.onclick = () => { delete cache[mode]; run(mode); };
+  const sh = $("#share"); if (sh) sh.onclick = async () => { const o = cur(), to = $("#destination").value.split(",")[0];
+    const txt = `My Stride plan to ${to}: leave ${o.leave_at}, ${o.segments.filter(x => x.kind === "ride").map(x => x.line).join(" then ") || "walk"}, arrive ${o.arrive_at}. ${R(o.minutes_without_open_door)} min with nothing open nearby.`;
+    try { if (navigator.share) await navigator.share({title: "My Stride plan", text: txt}); else { await navigator.clipboard.writeText(txt); sh.textContent = "Copied to clipboard ✓"; } } catch (e) {} };
+  const sa = $("#showall"); if (sa) sa.onclick = () => { showAll = true; const y = $("#sheet").scrollTop; render(); $("#sheet").scrollTop = y; };
+  document.querySelectorAll("[data-t]").forEach(b => b.onclick = () => { if (b.dataset.t !== tab){ tab = b.dataset.t; const y = $("#sheet").scrollTop; render(); $("#sheet").scrollTop = y; } });
   draw();
+}
+
+function tripTab(o){
+  const a = o.air, c = o.conditions || {};
+  let h = a ? `<div class="air">Outside <b>${R(a.minutes_outside)} min</b> · air <b>AQI ${a.aqi_avg}</b> (${a.aqi_avg<=50?"good":a.aqi_avg<=100?"moderate":"poor"})${c.daylight===false ? " · after dark" : c.daylight ? " · daylight" : ""}${c.temp_c != null ? ` · ${R(c.temp_c)}°C` : ""}</div>` : "";
+  h += `<div class="steps">`;
+  for (const x of o.segments){
+    if (x.kind === "walk"){ if (x.minutes < 1) continue; h += `<div class="step"><span class="si walk"></span><div><b>Walk ${R(x.minutes)} min</b><div class="sub">${x.meters} m · ${esc(x.start)}</div></div></div>`; }
+    else if (x.kind === "ride") h += `<div class="step"><span class="si ${pc(x.vehicle)}"></span><div><span class="pill ${pc(x.vehicle)}">${esc(x.line)}</span> <b>${esc(x.from)}</b> → <b>${esc(x.to)}</b><div class="sub">${esc(x.start)} – ${esc(x.end)}</div></div></div>`;
+    else { const w = o.waits.find(y => y.stop === x.stop && y.start === x.start) || {}; const n = w.nearest_open;
+      h += `<div class="step"><span class="si wait"></span><div><b>Wait ${R(x.minutes)} min</b> at ${esc(x.stop)}<div class="sub">${o.partial ? "Checking what's open nearby…" : n ? `${esc(n.name)} ${n.distance_m} m away, ${esc(until(n.hours_today))}` : "Nothing open nearby"}</div></div></div>`; }
+  }
+  return h + `<div class="step"><span class="si end"></span><div><b>Arrive ${esc(o.arrive_at)}</b></div></div></div>`;
+}
+function whyTab(){
+  const g = G(), s = S();
+  if (!s){ const placesChecked = new Set(data.options.flatMap(o => o.open_doors.map(p => p.name).concat(o.waits.filter(w => w.nearest_open).map(w => w.nearest_open.name)))).size;
+    return `<div class="why"><div>Stride compared <b>${data.options.length} routes</b> and checked the hours of the places along them.</div>
+      <div>None leaving around <b>${esc(g.leave_at)}</b> had fewer minutes with nothing open than Google's route (<b>${R(g.minutes_without_open_door)} min</b>).</div>
+      <div class="sub">Stride counts open businesses; it is not a safety rating.</div></div>`; }
+  const passed = [...new Set(s.open_doors.map(p => p.name).concat(s.waits.filter(w => w.covered && w.nearest_open).map(w => w.nearest_open.name)))];
+  return `<div class="why">
+    <div><b>${R(s.minutes_without_open_door)} min</b> with nothing open nearby, instead of <b>${R(g.minutes_without_open_door)} min</b> on Google's route.</div>
+    ${s.walk_minutes < g.walk_minutes - 1 ? `<div>Less walking: <b>${R(s.walk_minutes)} min</b> instead of ${R(g.walk_minutes)}.</div>` : ""}
+    ${passed.length ? `<div>Passes ${passed.slice(0,3).map(x => `<b>${esc(x)}</b>`).join(", ")}.</div>` : ""}
+    <div>Same departure, ${esc(s.leave_at)}. You arrive at <b>${esc(s.arrive_at)}</b> instead of ${esc(g.arrive_at)}.</div>
+    <div class="sub">Stride compared ${data.options.length} options. It counts open businesses; it is not a safety rating.</div></div>`;
+}
+function allTab(){
+  const rows = [...data.options].sort((a, b) => a.minutes_without_open_door - b.minutes_without_open_door || a.total_minutes - b.total_minutes);
+  return `<div class="steps">${rows.map(o => `<div class="step opt"><div style="flex:1"><div class="chain" style="margin-top:0">${chain(o)}</div>
+    <div class="sub">${esc(o.leave_at)} → ${esc(o.arrive_at)} ${o.role==="google" ? '<span class="tg g">Google</span>' : o.role==="stride" ? '<span class="tg s">Stride</span>' : ""}</div></div>
+    <div style="text-align:right"><b>${o.total_minutes} min</b><div class="sub"><b>${R(o.minutes_without_open_door)}</b> nothing open</div></div></div>`).join("")}</div>`;
+}
+function evTab(o){
+  const src = p => (p.evidence || []).slice(0, 2).map(x => `<div class="sub">“${esc(x.quote)}” ${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">source</a>` : ""}</div>`).join("");
+  const badge = st => `<span class="bdg ${st}">${{confirmed:"hours checked", listed:"listing only", uncertain:"hours doubtful"}[st] || st}</span>`;
+  let h = "";
+  for (const w of o.waits){ const n = w.nearest_open; if (n) h += `<div class="step"><div><b>${esc(n.name)}</b> ${badge(n.status)}<div class="sub">${n.distance_m} m from your wait · today ${esc(n.hours_today)}</div>${src(n)}</div></div>`; }
+  for (const p of o.open_doors) h += `<div class="step"><div><b>${esc(p.name)}</b> ${badge(p.status)}<div class="sub">${p.distance_m} m from your route · today ${esc(p.hours_today)}</div>${src(p)}</div></div>`;
+  for (const p of (o.skipped_places || [])) h += `<div class="step"><div><b>${esc(p.name)}</b> ${badge(p.status)}<div class="sub">Not counted. ${esc(p.reason)}</div>${src(p)}</div></div>`;
+  return `<div class="steps">${h || `<div class="step"><div>No open business within 100 m on this route.</div></div>`}
+    <div class="step"><div class="sub">${esc(data.trace.summary)} · ${esc((data.trace.providers || []).join(", "))}</div></div></div>`;
 }
 
 function line(o, color, w, op){
@@ -271,18 +395,19 @@ function line(o, color, w, op){
   for (const l of o.map){
     pts.push(...l.coords);
     L.polyline(l.coords, {color:"#fff", weight:w + 5, opacity:op, lineCap:"round", lineJoin:"round"}).addTo(layer);
-    L.polyline(l.coords, {color, weight:w, opacity:op, lineCap:"round", lineJoin:"round", dashArray: l.kind === "walk" && !l.covered ? "1 12" : null}).addTo(layer);
+    L.polyline(l.coords, {color, weight:w, opacity:op, lineCap:"round", lineJoin:"round", dashArray: l.kind === "walk" && l.covered === false ? "1 12" : null}).addTo(layer);
   }
   return pts;
 }
 
 function draw(){
   if (map){ map.remove(); map = null; }
-  map = L.map("map", {zoomControl:false, attributionControl:true});
+  map = L.map("map", {zoomControl:false, attributionControl:true, scrollWheelZoom:true, touchZoom:true, doubleClickZoom:true, maxZoom:19});
+  L.control.zoom({position:"bottomleft"}).addTo(map);
   const u = n => `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_${n}/MapServer/tile/{z}/{y}/{x}`;
-  L.tileLayer(u("Base"), {maxZoom:16, attribution:"Esri, © OpenStreetMap contributors"}).addTo(map);
+  L.tileLayer(u("Base"), {maxZoom:19, maxNativeZoom:16, attribution:"Esri, © OpenStreetMap contributors"}).addTo(map);
   layer = L.layerGroup().addTo(map);
-  L.tileLayer(u("Reference"), {maxZoom:16, pane:"overlayPane"}).addTo(map);
+  L.tileLayer(u("Reference"), {maxZoom:19, maxNativeZoom:16, pane:"overlayPane"}).addTo(map);
   const g = G(), s = S(), o = cur();
   const other = o === g ? s : g;
   if (other) line(other, other === g ? "#ff6a13" : "#0fb463", 5, .5);
@@ -294,6 +419,19 @@ function draw(){
   for (const w of o.waits) L.circleMarker([w.lat, w.lng], {radius:9, color:w.covered ? "#0fb463" : "#F57C1F", weight:3, fillColor:"#fff", fillOpacity:1}).bindTooltip(`Wait ${R(w.minutes)} min`, {permanent:true, direction:"top", offset:[0,-8]}).addTo(layer);
   for (const p of o.open_doors) L.circleMarker([p.lat, p.lng], {radius:5, color:"#fff", weight:2, fillColor:"#0fb463", fillOpacity:1}).bindTooltip(esc(p.name)).addTo(layer);
   if (pts.length) map.fitBounds(pts, {padding:[24,24]});
+  const walks = o.map.filter(l => l.kind === "walk" && l.coords.length);
+  const stops = [["Whole trip", pts, 15]];
+  if (walks.length) stops.push(["🚶 Start", walks[0].coords, 16]);
+  o.waits.forEach(w => stops.push([`⏱️ Wait ${R(w.minutes)} min`, [[w.lat, w.lng]].concat(w.nearest_open ? [[w.nearest_open.lat, w.nearest_open.lng]] : []), 16]));
+  if (walks.length > 1) stops.push(["📍 Arrive", walks.at(-1).coords, 16]);
+  if (pts.length){
+    const ctl = L.control({position: "topright"});
+    ctl.onAdd = () => { const d = L.DomUtil.create("div", "jump"); L.DomEvent.disableClickPropagation(d);
+      stops.forEach(([label, p, z], i) => { const b = L.DomUtil.create("button", i === 0 ? "on" : "", d); b.textContent = label;
+        b.onclick = () => { d.querySelectorAll("button").forEach(x => x.classList.remove("on")); b.classList.add("on"); map.flyToBounds(L.latLngBounds(p), {padding: [30, 30], maxZoom: z + 1, duration: .8}); }; });
+      return d; };
+    ctl.addTo(map);
+  }
 }
 </script>
 </body>

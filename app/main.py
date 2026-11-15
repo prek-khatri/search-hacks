@@ -4,7 +4,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from .core import ROOT
 from .plan import plan
-from .routes import TZ, fetch_routes, build_itinerary
+from .routes import TZ, fetch_routes, build_itinerary, public
 
 app = FastAPI(title="Stride")
 
@@ -73,3 +73,36 @@ def api_durations(req: DurationRequest):
     except (KeyError, RuntimeError) as e:
         raise HTTPException(502, str(e))
     return out
+
+
+class GoogleRequest(BaseModel):
+    origin: str
+    destination: str
+    end_time: str
+    mode: str = "transit"
+
+
+@app.post("/api/google")
+def api_google(req: GoogleRequest):
+    """Google's first route only (Google Routes, under a second) so the app can show it while Stride checks places."""
+    end = datetime.fromisoformat(req.end_time).replace(tzinfo=TZ)
+    saved = DEMOS.get((_norm(req.origin), _norm(req.destination), req.end_time[:16], req.mode))
+    if saved:
+        g = next(o for o in saved["options"] if o["role"] == "google")
+        return {"option": g}
+    try:
+        routes = fetch_routes(req.origin, req.destination, end, travel_mode="WALK" if req.mode == "walk" else "TRANSIT")
+    except (KeyError, RuntimeError) as e:
+        raise HTTPException(502, str(e))
+    if not routes:
+        raise HTTPException(404, "No route found for this trip and time.")
+    it = build_itinerary(routes[0], end)
+    lines = [{"kind": s["kind"], "coords": s.get("points") or [], "label": s.get("line"), "covered": None}
+             for s in it["segments"] if s["kind"] in ("walk", "ride") and s.get("points")]
+    segs = public(it)
+    walk = sum(s["minutes"] for s in segs if s["kind"] == "walk")
+    return {"option": {"role": "google", "label": "Google's first pick", "leave_at": it["leave"].strftime("%-I:%M %p"),
+                       "arrive_at": it["arrive"].strftime("%-I:%M %p"),
+                       "total_minutes": round((it["arrive"] - it["leave"]).total_seconds() / 60),
+                       "segments": segs, "map": lines, "waits": [], "open_doors": [], "skipped_places": [],
+                       "walk_minutes": round(walk, 1), "minutes_without_open_door": None, "partial": True}}
