@@ -140,6 +140,11 @@ def plan(origin, destination, end_local: datetime, max_extra=10, categories=None
                   "summary": f"Checked {sum(calls.values())} Telem calls: " +
                              ", ".join(f"{v} {k}" for k, v in calls.items())},
         "radius_m": RADIUS,
+        "telem": {"places_found": len(places), "map_searches": nq, "hours_checked": len(to_check),
+                  "confirmed": sum(1 for v in status.values() if v["status"] == "confirmed"),
+                  "doubtful": sum(1 for v in status.values() if v["status"] == "uncertain"),
+                  "listing_only": sum(1 for v in status.values() if v["status"] == "listed"),
+                  "providers": sorted(trace.providers), "routing": trace.routing, "calls": calls},
     }
 
 

@@ -106,3 +106,64 @@ def api_google(req: GoogleRequest):
                        "total_minutes": round((it["arrive"] - it["leave"]).total_seconds() / 60),
                        "segments": segs, "map": lines, "waits": [], "open_doors": [], "skipped_places": [],
                        "walk_minutes": round(walk, 1), "minutes_without_open_door": None, "partial": True}}
+
+
+# ---- Watch my trip: a Telem monitor for disruptions and closures along the chosen route ----
+import os as _os
+import httpx as _httpx
+from .core import TELEM_BASE
+
+
+def _telem(method, path, body=None):
+    r = _httpx.request(method, TELEM_BASE + path, json=body, timeout=30,
+                       headers={"Authorization": f"Bearer {_os.environ['TELEM_API_KEY']}"})
+    if r.status_code >= 400:
+        raise HTTPException(502, f"Telem monitor HTTP {r.status_code}: {r.text[:200]}")
+    return r.json()
+
+
+class WatchRequest(BaseModel):
+    lines: list[str] = []
+    places: list[str] = []
+    area: str = "San Francisco Bay Area"
+    date: str
+
+
+@app.post("/api/watch")
+def api_watch(req: WatchRequest):
+    parts = []
+    if req.lines:
+        parts.append(f"service delays, cancellations or detours on {', '.join(req.lines)} transit lines")
+    if req.places:
+        parts.append(f"closures or changed opening hours of {', '.join(req.places[:5])}")
+    if not parts:
+        raise HTTPException(400, "Nothing to watch on this route.")
+    query = f"News or alerts about {' and '.join(parts)} in the {req.area} on {req.date}"
+    m = _telem("POST", "/monitors", {"query": query[:400], "options": {"frequency": "1h"}, "ttl": "12h"})
+    return {"id": m["id"], "query": query[:400], "frequency": m.get("frequency"), "expires_at": m.get("expires_at")}
+
+
+@app.get("/api/watch/{monitor_id}")
+def api_watch_status(monitor_id: str):
+    m = _telem("GET", f"/monitors/{monitor_id}")
+    ch = _telem("GET", f"/monitors/{monitor_id}/agent/changes")
+    found = [{"name": c["subject"].get("name"), "url": (c.get("after") or {}).get("url"), "at": c.get("at")}
+             for c in ch.get("changes", []) if c.get("type") == "entity_added"]
+    a = m.get("agent_state") or {}
+    return {"status": m.get("status"), "agent": a.get("status"), "next_run_at": a.get("next_run_at"), "findings": found[-5:]}
+
+
+# ---- Measured result across all saved trips ----
+@app.get("/api/stats")
+def api_stats():
+    trips = list(DEMOS.values())
+    wins = []
+    for d in trips:
+        g = next((o for o in d["options"] if o["role"] == "google"), None)
+        s = next((o for o in d["options"] if o["role"] == "stride"), None)
+        if g and s:
+            wins.append((g["minutes_without_open_door"] - s["minutes_without_open_door"], s["total_minutes"] - g["total_minutes"]))
+    n = len(wins)
+    return {"trips": len(trips), "better_route": n,
+            "avg_fewer_min": round(sum(w[0] for w in wins) / n, 1) if n else 0,
+            "avg_extra_trip_min": round(sum(w[1] for w in wins) / n, 1) if n else 0}

@@ -73,6 +73,10 @@ All start at 880 W Maude Ave, Sunnyvale. In every example Google's route and Str
 | **Sat 7:00 PM** | Transit to Santa Clara University | 25 min trip, **12 min** nothing open | Bus 21, 41 min trip, **3 min** |
 | **Sat 8:00 PM** | Walk to Mexiqueña | 18 min walk, **14 min** nothing open | 19 min walk, **9 min** |
 
+**Measured across all 8 saved trips:** Stride found a better route leaving at the same time in **4 of 8**, with **5.1 fewer minutes** with nothing open on average, for **+4.8 minutes** of trip time. In the other 4, Google's route was already the best and Stride says so.
+
+**Watch my trip:** one tap creates a **Telem monitor** that checks hourly for delays or cancellations on your lines and closures of the places on your route.
+
 More detail on two of them:
 
 **Transit to Santa Clara University, ready at 7 PM** (both leave 7:16 PM)

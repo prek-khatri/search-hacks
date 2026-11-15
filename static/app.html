@@ -123,7 +123,7 @@ body{margin:0;min-height:100vh;background:#dfe9f3;display:flex;align-items:cente
 .nowchip{border:0;border-radius:10px;background:var(--lb);color:var(--navy);font:inherit;font-size:13px;font-weight:700;padding:0 12px;cursor:pointer;white-space:nowrap}
 .nowchip.on{background:var(--navy);color:#fff}
 .strip{display:flex;gap:2px;height:8px;margin-top:10px;border-radius:4px;overflow:hidden}
-.strip i{display:block;min-width:3px}.strip i.ride{background:#c9d6e6}.strip i.open{background:#0fb463}.strip i.none{background:#F57C1F}
+.strip i{display:block;min-width:3px;height:8px}.strip i.st-ride{background:#c9d6e6}.strip i.st-open{background:#0fb463}.strip i.st-none{background:#F57C1F}
 .verdict.checking{background:#fff}
 .spin{width:20px;height:20px;border-radius:50%;border:3px solid var(--lb2);border-top-color:var(--navy);flex:none;animation:spin 0.9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -133,6 +133,82 @@ body{margin:0;min-height:100vh;background:#dfe9f3;display:flex;align-items:cente
 .share{width:100%;border:0;border-radius:12px;background:#fff;color:var(--navy);font:inherit;font-weight:700;font-size:14px;padding:11px;margin-bottom:4px;cursor:pointer}
 .retry{border:0;border-radius:8px;background:var(--navy);color:#fff;font:inherit;font-size:13px;font-weight:700;padding:5px 10px;margin-left:6px;cursor:pointer}
 .tab[disabled]{opacity:.4;cursor:default}
+
+#map .leaflet-bottom{bottom:18px}
+#map .leaflet-control-attribution{font-size:9px;background:rgba(255,255,255,.75)}
+
+.rcard.s{border-color:#0fb463;box-shadow:0 6px 20px rgba(15,180,99,.18);background:linear-gradient(180deg,#F1FBF5 0,#fff 60%)}
+.rec{font-size:11px;font-weight:800;color:#fff;background:#0fb463;border-radius:999px;padding:3px 9px;letter-spacing:.02em}
+.gmini{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;background:#fff;border-radius:14px;padding:10px 12px;margin-bottom:10px;font-size:13px;color:var(--muted);cursor:pointer;border:2px solid transparent}
+.gmini.sel{border-color:var(--google)}.gm-l{font-weight:800;color:var(--ort);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.gm-t{flex:1}.gm-t b,.gm-n b{color:var(--navy)}
+.spot{position:relative;width:22px;height:22px}
+.spot .core{position:absolute;left:5px;top:5px;width:12px;height:12px;border-radius:50%;background:#0fb463;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.spot .ring{position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:rgba(15,180,99,.35);animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2);opacity:0}}
+.leaflet-tooltip.spot-tip{background:#0fb463;color:#fff;border:0;font-size:11px;font-weight:700;padding:3px 7px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.leaflet-tooltip.spot-tip::before{display:none}
+
+.when{display:grid!important;grid-template-columns:auto minmax(0,1.25fr) minmax(0,1fr);gap:6px}
+.when input{min-width:0;width:100%;padding:10px 8px;font-size:13px}
+.nowchip{padding:0 10px;font-size:12px}
+
+.gmini{display:block!important}
+.gm-top{display:flex;justify-content:space-between;align-items:center;gap:8px;white-space:nowrap}
+.gm-l{display:flex;align-items:center}
+.gm-t{margin-top:4px;white-space:nowrap;font-size:13px}
+
+.cmp{background:#fff;border-radius:16px;padding:14px}
+.cmp-key{display:flex;gap:14px;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.k{display:inline-block;width:14px;height:6px;border-radius:3px;margin-right:6px;vertical-align:middle}.k.g{background:#ff6a13}.k.s{background:#0fb463}
+.cmp-row{padding:10px 0;border-top:1px solid var(--lb2)}
+.cmp-l{display:block;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.cmp-b{display:flex;align-items:center;gap:8px;height:16px;margin:3px 0}
+.bar{height:10px;border-radius:5px;display:block}.bar.g{background:#ff6a13;opacity:.75}.bar.s{background:#0fb463}
+.cmp-b .v{font-size:13px;font-weight:700;color:var(--navy);white-space:nowrap}.cmp-b .v.win{color:#0a7a43}
+.cmp-time{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--lb2)}
+.cmp-time b{display:block;font-size:20px}
+.cmp-chips{display:flex;flex-wrap:wrap;gap:6px;padding-top:6px}.cmp-chips span{background:#E3F6EC;color:#0a5a33;font-size:12px;font-weight:700;border-radius:999px;padding:4px 10px}
+.cmp-note{font-size:12px;color:var(--muted);margin-top:10px}
+.routes{background:#fff;border-radius:16px;padding:6px 14px;margin-top:10px}
+.routes-h{font-size:12px;font-weight:700;color:var(--muted);padding:8px 0}
+.rt-row{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--lb2)}
+.rt-main{flex:1;min-width:0}.rt-side{width:84px;text-align:right}
+.rt-bar{height:6px;background:var(--lb);border-radius:3px;margin:4px 0 2px}.rt-bar span{display:block;height:6px;border-radius:3px;background:#F57C1F;margin-left:auto}
+.rt-row.stride .rt-bar span{background:#0fb463}.rt-v{font-size:13px;font-weight:800;color:var(--navy)}
+.link{text-align:center!important}
+
+#map{height:340px!important}
+.def{display:flex;gap:8px;align-items:flex-start;font-size:12px}
+.ii{flex:none;width:16px;height:16px;border-radius:50%;background:var(--navy);color:#fff;font:italic 800 11px Georgia,serif;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.hero{background:#fff;border-radius:20px;padding:16px;margin-bottom:12px;box-shadow:0 4px 18px rgba(27,54,93,.10);border:2px solid transparent}
+.hero.s{border-color:#0fb463;box-shadow:0 8px 24px rgba(15,180,99,.16)}
+.hh{display:flex;justify-content:space-between;align-items:center}
+.hk{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--navy)}.hk.s{color:#0a7a43}
+.iconbtn{border:0;background:var(--lb);color:var(--navy);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.hbig{font-size:46px;font-weight:800;line-height:1;margin-top:10px;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.hbig small{font-size:18px;color:var(--muted);font-weight:600}.htimes{font-size:16px;font-weight:600;color:var(--navy);margin-left:auto}
+.hstat{margin-top:12px;display:flex;flex-direction:column;gap:2px}
+.hn{font-size:15px;color:var(--navy)}.hn b{font-size:26px;color:var(--ort)}.hn.s b{color:#0a7a43}.hn.pending{color:var(--muted)}
+.hd{font-size:13px;color:#0a7a43;font-weight:700}
+.hfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;padding-top:10px;border-top:1px solid var(--lb2);font-size:13px;color:var(--muted)}
+.hfoot b{color:var(--navy)}
+.toggle{flex:none;border:0;border-radius:999px;background:var(--lb);color:var(--navy);font:inherit;font-weight:700;font-size:12px;padding:6px 10px;cursor:pointer}
+.hfoot .spin{width:16px;height:16px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px}
+
+.hk.g{color:var(--ort)}.toggle.s{background:#E3F6EC;color:#0a5a33}
+
+.telemline{display:flex;align-items:center;gap:6px;width:100%;margin-top:12px;border:0;background:var(--lb);border-radius:10px;padding:8px 10px;font:inherit;font-size:12px;color:var(--navy);cursor:pointer;text-align:left}
+.tdot{width:8px;height:8px;border-radius:50%;background:var(--navy);flex:none}.tchev{margin-left:auto;color:var(--muted)}
+.telembox{background:var(--lb);border-radius:0 0 10px 10px;margin-top:-4px;padding:8px 10px;font-size:12px;color:var(--navy)}.telembox div{padding:2px 0}.telembox b{margin-right:4px}
+.watchbtn{display:flex;align-items:center;gap:8px;width:100%;margin-top:8px;border:1.5px solid var(--navy);background:#fff;border-radius:10px;padding:9px 10px;font:inherit;font-size:13px;font-weight:700;color:var(--navy);cursor:pointer;text-align:left;flex-wrap:wrap}
+.watchbtn .sub{font-weight:400}
+.eye{width:14px;height:14px;border:2px solid var(--navy);border-radius:50% 0;transform:rotate(45deg);flex:none;position:relative}
+.watching{display:flex;gap:10px;align-items:flex-start;margin-top:8px;background:#E3F6EC;border-radius:10px;padding:9px 10px;font-size:13px;color:#0a5a33}
+.watching.err{background:#FDEBDD;color:var(--ort)}.watching a{color:#0a5a33}
+.live{width:10px;height:10px;border-radius:50%;background:#0fb463;flex:none;margin-top:4px;box-shadow:0 0 0 0 rgba(15,180,99,.6);animation:live 1.6s infinite}
+@keyframes live{70%{box-shadow:0 0 0 8px rgba(15,180,99,0)}100%{box-shadow:0 0 0 0 rgba(15,180,99,0)}}
+.cmp-stat{margin-top:12px;background:#E3F6EC;color:#0a5a33;border-radius:10px;padding:10px;font-size:13px}
 </style>
 </head>
 <body>
@@ -186,7 +262,8 @@ const PRESETS = [
   ["Evening · 7:00 PM · Transit", "Sunnyvale → Santa Clara University", "880 W Maude Ave, Sunnyvale, CA 94085", "Santa Clara University, Santa Clara, CA", "2026-11-14", "19:00", "transit"],
   ["Night · 8:00 PM · Walk", "Sunnyvale → Mexiqueña", "880 W Maude Ave, Sunnyvale, CA 94085", "Mexiqueña, 776 N Mathilda Ave, Sunnyvale, CA 94085", "2026-11-14", "20:00", "walk"],
 ];
-let data, mode = "transit", focus = "stride", cache = {}, map, layer, tab = "trip", showAll = false;
+let data, mode = "transit", focus = "stride", cache = {}, map, layer, tab = "trip", showAll = false, stats = null, telemOpen = false, watchTimer = null;
+fetch("/api/stats").then(r => r.json()).then(d => stats = d).catch(() => {});
 const LOGO = `<svg viewBox="0 0 120 120"><rect width="120" height="120" rx="28" fill="#1B365D"/>
   <path d="M82 32 H52 a15 15 0 0 0 0 30" fill="none" stroke="#F57C1F" stroke-width="10" stroke-linecap="round" stroke-dasharray="0.1 16"/>
   <path class="lg-green" pathLength="1" d="M52 62 H68 a15 15 0 0 1 0 30 H38" fill="none" stroke="#0fb463" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -221,7 +298,7 @@ function landingIntro(){
   setTimeout(() => anim("#licon", {transform: ["translateY(0px)", "translateY(-7px)", "translateY(0px)"]}, {duration: 3.2, repeat: Infinity, easing: "ease-in-out"}), 1800);
 }
 let seen = false; try { seen = localStorage.getItem("stride_seen") === "1"; } catch (e) {}
-const skipLanding = seen && !location.search.includes("intro");
+const skipLanding = false;  // landing screen shows on every load
 if (skipLanding){ $("#landing").classList.add("hidden"); $("#search").classList.remove("hidden"); document.querySelector(".phone").classList.remove("onlanding"); }
 else landingIntro();
 $("#start").onclick = () => { try { localStorage.setItem("stride_seen", "1"); } catch (e) {} $("#landing").classList.add("hidden"); $("#search").classList.remove("hidden"); document.querySelector(".phone").classList.remove("onlanding"); enter($("#search"));
@@ -302,13 +379,13 @@ function strip(o){
       const op = gr.filter(l => l.covered).reduce((a, l) => a + len(l.coords), 0) / tot;
       if (op > 0) parts.push([x.minutes * op, "open"]); if (op < 1) parts.push([x.minutes * (1 - op), "none"]); }
   }
-  return `<div class="strip">${parts.map(([m, k]) => `<i class="${k}" style="flex:${Math.max(m, .3)}"></i>`).join("")}</div>`;
+  return `<div class="strip">${parts.map(([m, k]) => `<i class="st-${k}" style="flex:${Math.max(m, .3)}"></i>`).join("")}</div>`;
 }
 
 function card(o, cls, name){
   const a = o.air, pending = o.minutes_without_open_door == null;
   return `<div class="rcard ${cls} ${(cls==="g") === (focus==="google") ? "sel" : ""}" data-f="${cls==="g"?"google":"stride"}">
-    <div class="rhead"><span class="who"><span class="sw" style="background:${cls==="g"?"var(--google)":"var(--stride)"}"></span>${name}</span><span class="sub">leave ${esc(o.leave_at)}</span></div>
+    <div class="rhead"><span class="who"><span class="sw" style="background:${cls==="g"?"var(--google)":"var(--stride)"}"></span>${name}</span>${cls==="s" ? `<span class="rec">Recommended</span>` : `<span class="sub">leave ${esc(o.leave_at)}</span>`}</div>
     <div class="rmain"><div><div class="big">${o.total_minutes}<small> min</small></div><div class="times">${esc(o.leave_at)} → ${esc(o.arrive_at)}</div></div>
       <div class="nothing">${pending ? `<b class="dots">…</b><span>checking open places</span>` : `<b>${R(o.minutes_without_open_door)} min</b><span>nothing open nearby</span>`}</div></div>
     <div class="chain">${chain(o)}</div>${strip(o)}
@@ -317,26 +394,38 @@ function card(o, cls, name){
 
 function render(){
   const g = G(), s = S(), o = cur();
-  let h = `<div class="grab"></div><div class="def">Nothing open nearby = minutes walking or waiting with no open shop, café or gas station within a 1-minute walk.</div>`;
-  if (data.partial){
-    h += data.failed ? `<div class="verdict same"><div><b>Couldn't check open places right now.</b> Google's route is shown. <button class="retry" id="retry2">Try again</button></div></div>`
-                     : `<div class="verdict checking"><span class="spin"></span><div><b>Checking open places along every route…</b> Google's route is ready below.</div></div>`;
-  } else if (s){
-    const dt = s.total_minutes - g.total_minutes, dn = R(g.minutes_without_open_door) - R(s.minutes_without_open_door);
-    h += `<div class="verdict win"><span class="vd"></span><div><b>${dt > 0 ? `+${dt} min` : "Same time"} · −${dn} min with nothing open</b><br>Stride's route, leaving at the same time as Google's</div></div>`;
-  } else h += `<div class="verdict same"><span class="vd"></span><div><b>Google's route is already your best</b> for this departure</div></div>`;
-  h += card(g, "g", "Google · fastest");
-  if (s) h += card(s, "s", "Stride · more open");
-  else if (data.partial && !data.failed) h += `<div class="rcard skel"><div class="sk w40"></div><div class="sk w70"></div><div class="sk w55"></div></div>`;
-  if (!data.partial) h += `<button class="share" id="share">Share this plan</button>`;
+  let h = `<div class="grab"></div><div class="def"><span class="ii">i</span>Minutes with nothing open = time you walk or wait with no open shop, café or gas station within a 1-minute walk.</div>`;
+  const SHARE = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>`;
+  const hero = (focus === "google" || !s) ? g : s, isS = hero === s, show = hero;
+  const head = data.partial ? `<span class="hk">Google's route</span>` : isS ? `<span class="hk s">Stride · recommended</span>` : s ? `<span class="hk g">Google · fastest</span>` : `<span class="hk">Google's route is your best</span>`;
+  let foot;
+  if (data.partial) foot = data.failed ? `Couldn't check open places. <button class="retry" id="retry2">Try again</button>` : `<span class="spin"></span> Checking open places along every route…`;
+  else if (isS) foot = `<span>vs Google: <b>${g.total_minutes} min</b> · <b>${R(g.minutes_without_open_door)} min</b> with nothing open</span><button class="toggle" id="toggleg">Show Google</button>`;
+  else if (s) foot = `<span>Stride's route: <b>${s.total_minutes} min</b> · <b>${R(s.minutes_without_open_door)} min</b> with nothing open</span><button class="toggle s" id="toggleg">Show Stride</button>`;
+  else foot = `<span>Stride compared ${data.options.length} routes leaving around ${esc(g.leave_at)}; none had less time with nothing open.</span>`;
+  const nothing = hero.minutes_without_open_door == null ? `<span class="hn pending">checking…</span>` : `<span class="hn ${isS ? "s" : ""}"><b>${R(hero.minutes_without_open_door)}</b> min with nothing open</span>`;
+  const diff = isS ? `<span class="hd">${R(g.minutes_without_open_door) - R(s.minutes_without_open_door)} fewer than Google · ${s.total_minutes - g.total_minutes > 0 ? `+${s.total_minutes - g.total_minutes} min trip` : "same trip time"}</span>` : "";
+  h += `<div class="hero ${isS ? "s" : ""}">
+    <div class="hh">${head}${data.partial ? "" : `<button class="iconbtn" id="share" aria-label="Share this plan">${SHARE}</button>`}</div>
+    <div class="hbig">${hero.total_minutes}<small> min</small><span class="htimes">${esc(hero.leave_at)} → ${esc(hero.arrive_at)}</span></div>
+    <div class="hstat">${nothing}${diff}</div>
+    <div class="chain">${chain(show)}</div>${strip(show)}
+    ${data.telem ? `<button class="telemline" id="telemline"><span class="tdot"></span>Telem checked <b>${data.telem.places_found}</b> places · <b>${data.telem.confirmed}</b> hours confirmed${data.telem.doubtful ? ` · <b>${data.telem.doubtful}</b> doubtful` : ""}<span class="tchev">${telemOpen ? "▴" : "▾"}</span></button>
+      ${telemOpen ? `<div class="telembox"><div><b>Places</b> Google Maps listings, ${data.telem.map_searches} searches</div><div><b>Hours check</b> Google Reviews + web search</div>
+        <div><b>Web search routed to</b> ${esc([...new Set((data.telem.routing || []).flat())].join(", ") || "auto")}</div><div class="sub">${esc((data.trace && data.trace.summary) || "")}</div></div>` : ""}` : ""}
+    ${data.partial ? "" : watchRow()}
+    <div class="hfoot">${foot}</div></div>`;
   const tabs = [["trip","Steps"],["why","Why"],["ev","Places"]];
   if (data.partial) tab = "trip";
   h += `<div class="tabs">${tabs.map(([k,l]) => `<button class="tab ${tab===k?"on":""}" data-t="${k}" ${data.partial && k !== "trip" ? "disabled" : ""}>${l}</button>`).join("")}</div>`;
   h += tab === "trip" ? tripTab(o) : tab === "why" ? whyTab() + (showAll ? allTab() : `<button class="link" id="showall">See all ${data.options.length} routes Stride compared ›</button>`) : evTab(o);
   $("#sheet").innerHTML = h; $("#sheet").scrollTop = 0;
-  anim(document.querySelectorAll(".rcard, .none"), {opacity: [0, 1], transform: ["translateY(16px)", "translateY(0px)"]}, {...spring, delay: M ? M.stagger(.08) : 0});
-  if (M) document.querySelectorAll(".nothing b, .big").forEach(el => { const n = parseFloat(el.textContent); if (isNaN(n)) return;
+  anim(document.querySelectorAll(".hero"), {opacity: [0, 1], transform: ["translateY(16px)", "translateY(0px)"]}, {...spring, delay: M ? M.stagger(.08) : 0});
+  if (M) document.querySelectorAll(".hn b").forEach(el => { const n = parseFloat(el.textContent); if (isNaN(n)) return;
     const tail = el.innerHTML.replace(/^\s*\d+/, ""); M.animate(0, n, {duration: .8, easing: [.22, 1, .36, 1], onUpdate: v => el.innerHTML = Math.round(v) + tail}); });
+  const tl = $("#telemline"); if (tl) tl.onclick = () => { telemOpen = !telemOpen; const y = $("#sheet").scrollTop; render(); $("#sheet").scrollTop = y; };
+  const wb = $("#watch"); if (wb) wb.onclick = startWatch;
+  const tg = $("#toggleg"); if (tg) tg.onclick = () => { focus = focus === "google" ? "stride" : "google"; render(); };
   document.querySelectorAll(".rcard").forEach(c => c.onclick = () => { if (c.dataset.f !== focus){ focus = c.dataset.f; render(); } });
   const r2 = $("#retry2"); if (r2) r2.onclick = () => { delete cache[mode]; run(mode); };
   const sh = $("#share"); if (sh) sh.onclick = async () => { const o = cur(), to = $("#destination").value.split(",")[0];
@@ -345,6 +434,31 @@ function render(){
   const sa = $("#showall"); if (sa) sa.onclick = () => { showAll = true; const y = $("#sheet").scrollTop; render(); $("#sheet").scrollTop = y; };
   document.querySelectorAll("[data-t]").forEach(b => b.onclick = () => { if (b.dataset.t !== tab){ tab = b.dataset.t; const y = $("#sheet").scrollTop; render(); $("#sheet").scrollTop = y; } });
   draw();
+}
+
+function watchRow(){
+  const w = data.watch;
+  if (!w) return `<button class="watchbtn" id="watch"><span class="eye"></span>Watch my trip<span class="sub"> · Telem checks for delays and closures</span></button>`;
+  if (w.error) return `<div class="watching err">Couldn't start watching: ${esc(w.error)}</div>`;
+  const n = (w.findings || []).length;
+  return `<div class="watching"><span class="live"></span><div><b>Watching with Telem</b> · checks hourly until tomorrow<div class="sub">${w.agent === "ready" ? (n ? `${n} new alert${n > 1 ? "s" : ""}:` : "No delays or closures found so far") : "Setting up the watch…"}</div>
+    ${(w.findings || []).map(f => `<div class="sub">• ${f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name || f.url)}</a>` : esc(f.name)}</div>`).join("")}</div></div>`;
+}
+async function startWatch(){
+  const o = cur(), d = data;
+  const lines = [...new Set(o.segments.filter(x => x.kind === "ride").map(x => `${x.vehicle === "HEAVY_RAIL" ? "Caltrain" : "VTA"} ${x.line}`))];
+  const places = [...new Set(o.open_doors.map(p => p.name).concat(o.waits.filter(w => w.nearest_open).map(w => w.nearest_open.name)))];
+  d.watch = {agent: "compiling", findings: []}; render();
+  try {
+    const r = await fetch("/api/watch", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({lines, places, date: $("#date").value})});
+    const m = await r.json(); if (!r.ok) throw new Error(m.detail || "error");
+    d.watch.id = m.id; pollWatch(d);
+  } catch (e) { d.watch = {error: e.message}; if (data === d) render(); }
+}
+async function pollWatch(d){
+  clearTimeout(watchTimer);
+  try { const r = await fetch(`/api/watch/${d.watch.id}`); const w = await r.json(); if (r.ok) Object.assign(d.watch, w); } catch (e) {}
+  if (data === d){ const y = $("#sheet").scrollTop; render(); $("#sheet").scrollTop = y; watchTimer = setTimeout(() => pollWatch(d), 15000); }
 }
 
 function tripTab(o){
@@ -361,24 +475,39 @@ function tripTab(o){
 }
 function whyTab(){
   const g = G(), s = S();
-  if (!s){ const placesChecked = new Set(data.options.flatMap(o => o.open_doors.map(p => p.name).concat(o.waits.filter(w => w.nearest_open).map(w => w.nearest_open.name)))).size;
-    return `<div class="why"><div>Stride compared <b>${data.options.length} routes</b> and checked the hours of the places along them.</div>
-      <div>None leaving around <b>${esc(g.leave_at)}</b> had fewer minutes with nothing open than Google's route (<b>${R(g.minutes_without_open_door)} min</b>).</div>
-      <div class="sub">Stride counts open businesses; it is not a safety rating.</div></div>`; }
+  if (!s) return `<div class="cmp"><div class="cmp-note">Stride compared <b>${data.options.length} routes</b>. None leaving around <b>${esc(g.leave_at)}</b> had less time with nothing open than Google's <b>${R(g.minutes_without_open_door)} min</b>.</div></div>`;
   const passed = [...new Set(s.open_doors.map(p => p.name).concat(s.waits.filter(w => w.covered && w.nearest_open).map(w => w.nearest_open.name)))];
-  return `<div class="why">
-    <div><b>${R(s.minutes_without_open_door)} min</b> with nothing open nearby, instead of <b>${R(g.minutes_without_open_door)} min</b> on Google's route.</div>
-    ${s.walk_minutes < g.walk_minutes - 1 ? `<div>Less walking: <b>${R(s.walk_minutes)} min</b> instead of ${R(g.walk_minutes)}.</div>` : ""}
-    ${passed.length ? `<div>Passes ${passed.slice(0,3).map(x => `<b>${esc(x)}</b>`).join(", ")}.</div>` : ""}
-    <div>Same departure, ${esc(s.leave_at)}. You arrive at <b>${esc(s.arrive_at)}</b> instead of ${esc(g.arrive_at)}.</div>
-    <div class="sub">Stride compared ${data.options.length} options. It counts open businesses; it is not a safety rating.</div></div>`;
+  const gPassed = [...new Set(g.open_doors.map(p => p.name).concat(g.waits.filter(w => w.covered && w.nearest_open).map(w => w.nearest_open.name)))];
+  const row = (label, gv, sv, unit, lowerBetter = true, fmt = v => R(v)) => {
+    const mx = Math.max(gv, sv, 1), better = lowerBetter ? sv < gv : sv > gv;
+    return `<div class="cmp-row"><div class="cmp-l">${label}</div>
+      <div class="cmp-bars"><div class="cmp-b"><span class="bar g" style="width:${Math.max(4, 100 * gv / mx)}%"></span><span class="v">${fmt(gv)}${unit}</span></div>
+      <div class="cmp-b"><span class="bar s" style="width:${Math.max(4, 100 * sv / mx)}%"></span><span class="v ${better ? "win" : ""}">${fmt(sv)}${unit}</span></div></div></div>`;
+  };
+  const toMin = t => { const d = new Date("2000/1/1 " + t); return d.getHours() * 60 + d.getMinutes(); };
+  return `<div class="cmp">
+    <div class="cmp-key"><span><i class="k g"></i>Google</span><span><i class="k s"></i>Stride</span></div>
+    ${row("Nothing open nearby", g.minutes_without_open_door, s.minutes_without_open_door, " min")}
+    ${row("Walking", g.walk_minutes, s.walk_minutes, " min")}
+    ${row("Waiting at stops", g.wait_minutes || 0, s.wait_minutes || 0, " min")}
+    ${row("Open places passed", gPassed.length, passed.length, "", false)}
+    <div class="cmp-time"><div><span class="cmp-l">Leave</span><b>${esc(s.leave_at)}</b><span class="sub">both</span></div>
+      <div><span class="cmp-l">Arrive</span><b>${esc(s.arrive_at)}</b><span class="sub">${toMin(s.arrive_at) - toMin(g.arrive_at) > 0 ? `+${toMin(s.arrive_at) - toMin(g.arrive_at)} min vs Google` : "same as Google"}</span></div></div>
+    ${passed.length ? `<div class="cmp-chips">${passed.slice(0, 4).map(n => `<span>${esc(n)}</span>`).join("")}</div>` : ""}
+    ${stats && stats.better_route ? `<div class="cmp-stat"><b>Tested on ${stats.trips} real trips:</b> Stride found a better route leaving at the same time in <b>${stats.better_route}</b>, with <b>${stats.avg_fewer_min} fewer min</b> with nothing open on average (+${stats.avg_extra_trip_min} min trip).</div>` : ""}
+    <div class="cmp-note">Out of ${data.options.length} routes compared. Counts open businesses, not a safety rating.</div></div>`;
 }
+
 function allTab(){
   const rows = [...data.options].sort((a, b) => a.minutes_without_open_door - b.minutes_without_open_door || a.total_minutes - b.total_minutes);
-  return `<div class="steps">${rows.map(o => `<div class="step opt"><div style="flex:1"><div class="chain" style="margin-top:0">${chain(o)}</div>
-    <div class="sub">${esc(o.leave_at)} → ${esc(o.arrive_at)} ${o.role==="google" ? '<span class="tg g">Google</span>' : o.role==="stride" ? '<span class="tg s">Stride</span>' : ""}</div></div>
-    <div style="text-align:right"><b>${o.total_minutes} min</b><div class="sub"><b>${R(o.minutes_without_open_door)}</b> nothing open</div></div></div>`).join("")}</div>`;
+  const mx = Math.max(...rows.map(o => o.minutes_without_open_door), 1);
+  return `<div class="routes"><div class="routes-h">All ${rows.length} routes, least time with nothing open first</div>${rows.map(o => `
+    <div class="rt-row ${o.role}"><div class="rt-main"><div class="chain" style="margin-top:0">${chain(o)}</div>
+      <div class="sub">${esc(o.leave_at)} → ${esc(o.arrive_at)} · ${o.total_minutes} min</div></div>
+      <div class="rt-side">${o.role === "google" ? '<span class="tg g">Google</span>' : o.role === "stride" ? '<span class="tg s">Stride</span>' : ""}
+        <div class="rt-bar"><span style="width:${Math.max(6, 100 * o.minutes_without_open_door / mx)}%"></span></div><div class="rt-v">${R(o.minutes_without_open_door)} min</div></div></div>`).join("")}</div>`;
 }
+
 function evTab(o){
   const src = p => (p.evidence || []).slice(0, 2).map(x => `<div class="sub">“${esc(x.quote)}” ${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">source</a>` : ""}</div>`).join("");
   const badge = st => `<span class="bdg ${st}">${{confirmed:"hours checked", listed:"listing only", uncertain:"hours doubtful"}[st] || st}</span>`;
@@ -410,20 +539,28 @@ function draw(){
   L.tileLayer(u("Reference"), {maxZoom:19, maxNativeZoom:16, pane:"overlayPane"}).addTo(map);
   const g = G(), s = S(), o = cur();
   const other = o === g ? s : g;
-  if (other) line(other, other === g ? "#ff6a13" : "#0fb463", 5, .5);
-  const pts = line(o, o === g ? "#ff6a13" : "#0fb463", 7, 1);
+  if (other) line(other, other === g ? "#ff6a13" : "#0fb463", other === g ? 3 : 5, other === g ? .35 : .55);
+  if (o === s) for (const l of o.map) L.polyline(l.coords, {color:"#0fb463", weight:20, opacity:.18, lineCap:"round", lineJoin:"round"}).addTo(layer);
+  const pts = line(o, o === g ? "#ff6a13" : "#0fb463", o === s ? 8 : 6, 1);
   if (pts.length){
     L.circleMarker(pts[0], {radius:7, color:"#fff", weight:3, fillColor:"#1B365D", fillOpacity:1}).bindTooltip("Start", {permanent:true, direction:"left"}).addTo(layer);
     L.circleMarker(pts.at(-1), {radius:7, color:"#fff", weight:3, fillColor:"#F57C1F", fillOpacity:1}).bindTooltip("Arrive", {permanent:true, direction:"right"}).addTo(layer);
   }
   for (const w of o.waits) L.circleMarker([w.lat, w.lng], {radius:9, color:w.covered ? "#0fb463" : "#F57C1F", weight:3, fillColor:"#fff", fillOpacity:1}).bindTooltip(`Wait ${R(w.minutes)} min`, {permanent:true, direction:"top", offset:[0,-8]}).addTo(layer);
-  for (const p of o.open_doors) L.circleMarker([p.lat, p.lng], {radius:5, color:"#fff", weight:2, fillColor:"#0fb463", fillOpacity:1}).bindTooltip(esc(p.name)).addTo(layer);
+  const spots = [], seenSpot = new Set();
+  for (const w of o.waits) if (w.nearest_open && w.covered && !seenSpot.has(w.nearest_open.name)){ seenSpot.add(w.nearest_open.name); spots.push(w.nearest_open); }
+  for (const p of o.open_doors) if (!seenSpot.has(p.name)){ seenSpot.add(p.name); spots.push(p); }
+  spots.forEach((p, k) => {
+    const icon = L.divIcon({className: "", html: `<div class="spot"><span class="ring"></span><span class="core"></span></div>`, iconSize: [22, 22], iconAnchor: [11, 11]});
+    const mk = L.marker([p.lat, p.lng], {icon}).bindPopup(`<b>${esc(p.name)}</b><br>${esc(until(p.hours_today))}`).addTo(layer);
+    if (k < 4) mk.bindTooltip(`${esc(p.name)} · ${esc(until(p.hours_today))}`, {permanent: true, direction: k % 2 ? "left" : "right", offset: [k % 2 ? -10 : 10, 0], className: "spot-tip"});
+  });
   if (pts.length) map.fitBounds(pts, {padding:[24,24]});
   const walks = o.map.filter(l => l.kind === "walk" && l.coords.length);
   const stops = [["Whole trip", pts, 15]];
-  if (walks.length) stops.push(["🚶 Start", walks[0].coords, 16]);
-  o.waits.forEach(w => stops.push([`⏱️ Wait ${R(w.minutes)} min`, [[w.lat, w.lng]].concat(w.nearest_open ? [[w.nearest_open.lat, w.nearest_open.lng]] : []), 16]));
-  if (walks.length > 1) stops.push(["📍 Arrive", walks.at(-1).coords, 16]);
+  if (walks.length) stops.push(["Start", walks[0].coords, 16]);
+  o.waits.forEach(w => stops.push([`Wait ${R(w.minutes)} min`, [[w.lat, w.lng]].concat(w.nearest_open ? [[w.nearest_open.lat, w.nearest_open.lng]] : []), 16]));
+  if (walks.length > 1) stops.push(["Arrive", walks.at(-1).coords, 16]);
   if (pts.length){
     const ctl = L.control({position: "topright"});
     ctl.onAdd = () => { const d = L.DomUtil.create("div", "jump"); L.DomEvent.disableClickPropagation(d);
